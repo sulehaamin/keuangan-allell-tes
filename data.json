@@ -1,5 +1,13 @@
 [
   {
+    "id": 1784650580842,
+    "tipe": "keluar",
+    "tanggal": "2026-07-21",
+    "jumlah": 150000,
+    "kategori": "Tagihan",
+    "catatan": "beli token"
+  },
+  {
     "id": 1784650399494,
     "tipe": "keluar",
     "tanggal": "2026-07-21",
