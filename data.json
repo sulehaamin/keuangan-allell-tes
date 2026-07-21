@@ -6,5 +6,29 @@
     "jumlah": 45000,
     "kategori": "Makan & Minum",
     "catatan": "ngopi"
+  },
+  {
+    "id": 1784643642741,
+    "tipe": "keluar",
+    "tanggal": "2026-07-21",
+    "jumlah": 250000,
+    "kategori": "Tagihan",
+    "catatan": "listrik"
+  },
+  {
+    "id": 1784643264685,
+    "tipe": "keluar",
+    "tanggal": "2026-07-21",
+    "jumlah": 35000,
+    "kategori": "Makan & Minum",
+    "catatan": "kopi plazgos"
+  },
+  {
+    "id": 1784643252314,
+    "tipe": "masuk",
+    "tanggal": "2026-07-21",
+    "jumlah": 1000000,
+    "kategori": "Gaji",
+    "catatan": ""
   }
 ]
