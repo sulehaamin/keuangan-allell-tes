@@ -4,324 +4,287 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catatan Keuangan</title>
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%230f172a'/><rect x='8' y='20' width='48' height='30' rx='6' fill='%231e3a5f'/><rect x='8' y='26' width='48' height='8' fill='%233b82f6'/><rect x='14' y='38' width='12' height='6' rx='2' fill='%2322c55e'/><circle cx='48' cy='18' r='10' fill='%23eab308'/><text x='48' y='23' text-anchor='middle' font-size='14' font-weight='bold' fill='%230f172a' font-family='Arial'>$</text></svg>" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23f0abfc'/><text x='32' y='44' text-anchor='middle' font-size='36'>💰</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --win-bg:      #008080;       /* teal desktop */
-      --win-face:    #c0c0c0;       /* classic gray */
-      --win-light:   #ffffff;
-      --win-dark:    #808080;
-      --win-darker:  #404040;
-      --win-black:   #000000;
-      --win-titlebar:#000080;       /* navy title bar */
-      --win-title-txt:#ffffff;
-      --win-btn:     #c0c0c0;
-      --win-inset:   #808080;
-      --accent-green:#008000;
-      --accent-red:  #800000;
-      --accent-blue: #000080;
-      --text:        #000000;
-      --muted:       #444444;
+      --bg:        #f0d6f5;   /* lavender desktop */
+      --win-bg:    #fefce8;   /* cream window body */
+      --titlebar:  #d9f99d;   /* lime green title bar */
+      --border:    #1a1a1a;   /* thick black border */
+      --shadow:    4px 4px 0 #1a1a1a;
+      --dot-red:   #f87171;
+      --dot-yellow:#fbbf24;
+      --dot-green: #a3e635;
+      --accent:    #7c3aed;   /* purple accent */
+      --accent2:   #f472b6;   /* pink */
+      --accent3:   #34d399;   /* mint */
+      --text:      #1a1a1a;
+      --muted:     #6b7280;
+      --green-txt: #15803d;
+      --red-txt:   #dc2626;
+      --blue-txt:  #1d4ed8;
+      --input-bg:  #ffffff;
+      --radius:    10px;
     }
 
     body {
-      font-family: 'MS Sans Serif', 'Tahoma', 'Arial', sans-serif;
-      font-size: 11px;
-      background: var(--win-bg);
+      font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+      background-color: var(--bg);
       background-image:
-        repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(0,0,0,.03) 1px, rgba(0,0,0,.03) 2px),
-        repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(0,0,0,.03) 1px, rgba(0,0,0,.03) 2px);
+        radial-gradient(circle, #d8b4fe33 1px, transparent 1px);
+      background-size: 24px 24px;
       min-height: 100vh;
-      padding: 16px 8px 40px;
+      padding: 20px 12px 60px;
+      color: var(--text);
     }
 
-    /* ── WINDOW FRAME ── */
-    .win-window {
-      background: var(--win-face);
-      border-top:    2px solid var(--win-light);
-      border-left:   2px solid var(--win-light);
-      border-right:  2px solid var(--win-darker);
-      border-bottom: 2px solid var(--win-darker);
-      margin-bottom: 12px;
+    /* ── PAGE TITLE ── */
+    .page-title {
+      text-align: center;
+      margin-bottom: 18px;
     }
+    .page-title h1 {
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--accent);
+      text-shadow: 2px 2px 0 #1a1a1a;
+      letter-spacing: -0.5px;
+    }
+    .page-title p { font-size: .82rem; color: var(--muted); margin-top: 2px; }
 
-    .win-titlebar {
-      background: linear-gradient(to right, var(--win-titlebar), #1084d0);
-      color: var(--win-title-txt);
-      padding: 3px 6px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: bold;
-      user-select: none;
-    }
-    .win-titlebar .title-left { display: flex; align-items: center; gap: 5px; }
-    .win-titlebar .title-icon { font-size: 14px; }
-    .win-title-btns { display: flex; gap: 2px; }
-    .win-title-btn {
-      width: 16px; height: 14px;
-      background: var(--win-face);
-      border-top: 1px solid var(--win-light);
-      border-left: 1px solid var(--win-light);
-      border-right: 1px solid var(--win-darker);
-      border-bottom: 1px solid var(--win-darker);
-      font-size: 9px; line-height: 13px; text-align: center;
-      cursor: default; color: #000; font-weight: bold;
-    }
-
-    .win-body { padding: 10px; }
-
-    /* ── MENU BAR ── */
-    .menubar {
-      background: var(--win-face);
-      border-bottom: 1px solid var(--win-dark);
-      padding: 2px 6px;
-      display: flex; gap: 2px;
-    }
-    .menubar span {
-      padding: 2px 8px; font-size: 11px; cursor: default;
-    }
-    .menubar span:hover { background: var(--win-titlebar); color: #fff; }
-
-    /* ── CONTAINER ── */
+    /* ── WINDOW ── */
     .container { max-width: 620px; margin: 0 auto; }
 
-    /* ── SUMMARY (STATUS BAR STYLE) ── */
-    .summary {
-      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;
-      margin-bottom: 12px;
-    }
-    .card {
-      background: var(--win-face);
-      border-top:    2px solid var(--win-darker);
-      border-left:   2px solid var(--win-darker);
-      border-right:  2px solid var(--win-light);
-      border-bottom: 2px solid var(--win-light);
-      padding: 8px 6px; text-align: center;
-    }
-    .card .label {
-      font-size: 9px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px;
-    }
-    .card .amount { font-size: 13px; font-weight: bold; word-break: break-all; }
-    .card.saldo .amount { color: var(--accent-blue); }
-    .card.masuk .amount { color: var(--accent-green); }
-    .card.keluar .amount { color: var(--accent-red); }
-
-    /* ── GROUPBOX (section label) ── */
-    .groupbox {
-      border: 1px solid var(--win-dark);
-      border-top: 1px solid var(--win-darker);
-      padding: 10px 10px 10px;
-      margin-bottom: 12px;
-      position: relative;
-    }
-    .groupbox-label {
-      position: absolute; top: -8px; left: 8px;
-      background: var(--win-face);
-      padding: 0 4px; font-size: 11px; font-weight: bold;
+    .win {
+      background: var(--win-bg);
+      border: 2.5px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      overflow: hidden;
     }
 
-    /* ── TOGGLE TYPE (radio-button style) ── */
+    .win-bar {
+      background: var(--titlebar);
+      border-bottom: 2.5px solid var(--border);
+      padding: 7px 10px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .win-bar-left { display: flex; align-items: center; gap: 7px; }
+    .win-dots { display: flex; gap: 5px; }
+    .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      border: 2px solid var(--border);
+    }
+    .dot.red    { background: var(--dot-red); }
+    .dot.yellow { background: var(--dot-yellow); }
+    .dot.green  { background: var(--dot-green); }
+    .win-title {
+      font-size: .8rem; font-weight: 700; color: var(--text);
+    }
+
+    /* toolbar pill (address bar style) */
+    .win-pill {
+      background: #fff; border: 2px solid var(--border);
+      border-radius: 20px; padding: 2px 10px;
+      font-size: .72rem; font-weight: 600; color: var(--muted);
+      flex: 1; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .win-body { padding: 14px; }
+
+    /* ── SUMMARY ── */
+    .summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .sum-card {
+      background: #fff;
+      border: 2.5px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 3px 3px 0 var(--border);
+      padding: 12px 8px; text-align: center;
+    }
+    .sum-card .s-label {
+      font-size: .65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .5px; color: var(--muted); margin-bottom: 5px;
+    }
+    .sum-card .s-amount { font-size: .95rem; font-weight: 700; word-break: break-all; }
+    .sum-card.saldo  .s-amount { color: var(--blue-txt); }
+    .sum-card.masuk  .s-amount { color: var(--green-txt); }
+    .sum-card.keluar .s-amount { color: var(--red-txt); }
+
+    /* ── TOGGLE TYPE ── */
     .toggle-type {
-      display: flex; gap: 16px; margin-bottom: 10px; padding: 4px 0;
+      display: flex;
+      background: #f3f4f6;
+      border: 2px solid var(--border);
+      border-radius: 30px;
+      padding: 3px;
+      margin-bottom: 14px;
+      gap: 4px;
     }
     .toggle-type button {
-      background: transparent; border: none; cursor: pointer;
-      font-size: 11px; color: #000;
-      display: flex; align-items: center; gap: 5px; padding: 2px 0;
+      flex: 1; padding: 7px; border: 2px solid transparent;
+      border-radius: 24px; background: transparent;
+      font-size: .82rem; font-weight: 600; font-family: inherit;
+      cursor: pointer; transition: all .15s; color: var(--muted);
     }
-    .toggle-type button::before {
-      content: '○'; font-size: 13px; color: #555;
+    .toggle-type button.active-masuk {
+      background: #dcfce7; border-color: var(--border);
+      color: var(--green-txt); box-shadow: 2px 2px 0 var(--border);
     }
-    .toggle-type button.active-masuk::before,
-    .toggle-type button.active-keluar::before {
-      content: '●'; color: #000;
+    .toggle-type button.active-keluar {
+      background: #fee2e2; border-color: var(--border);
+      color: var(--red-txt); box-shadow: 2px 2px 0 var(--border);
     }
-    .toggle-type button.active-masuk  { color: var(--accent-green); font-weight: bold; }
-    .toggle-type button.active-keluar { color: var(--accent-red);   font-weight: bold; }
 
-    /* ── FORM ELEMENTS ── */
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .form-group { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
-    .form-group label { font-size: 11px; color: #000; }
+    /* ── FORM ── */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+    .form-group label { font-size: .75rem; font-weight: 700; color: var(--text); }
 
-    .form-group input, .form-group select, .form-group textarea {
-      background: white;
-      border-top:    2px solid var(--win-darker);
-      border-left:   2px solid var(--win-darker);
-      border-right:  2px solid var(--win-light);
-      border-bottom: 2px solid var(--win-light);
-      color: #000; padding: 3px 5px;
-      font-size: 11px; font-family: inherit;
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      background: var(--input-bg);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 10px;
+      font-size: .85rem;
+      font-family: inherit;
       width: 100%; outline: none;
+      transition: box-shadow .15s;
     }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: 1px dotted #000;
-      outline-offset: -2px;
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      box-shadow: 3px 3px 0 var(--accent);
     }
-    .form-group textarea { resize: vertical; min-height: 50px; }
-    select option { background: white; }
+    .form-group textarea { resize: vertical; min-height: 60px; }
+    select option { background: #fff; }
 
-    /* ── WIN BUTTONS ── */
-    .win-btn {
-      background: var(--win-face);
-      border-top:    2px solid var(--win-light);
-      border-left:   2px solid var(--win-light);
-      border-right:  2px solid var(--win-darker);
-      border-bottom: 2px solid var(--win-darker);
-      padding: 4px 14px; font-size: 11px;
-      font-family: inherit; cursor: pointer; color: #000;
-      min-width: 75px;
+    /* ── BUTTONS ── */
+    .btn {
+      background: #fff; border: 2.5px solid var(--border);
+      border-radius: 8px; padding: 7px 14px;
+      font-size: .8rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; box-shadow: 3px 3px 0 var(--border);
+      transition: all .1s; color: var(--text);
     }
-    .win-btn:active {
-      border-top:    2px solid var(--win-darker);
-      border-left:   2px solid var(--win-darker);
-      border-right:  2px solid var(--win-light);
-      border-bottom: 2px solid var(--win-light);
-      padding: 5px 13px 3px 15px;
-    }
-    .win-btn:focus { outline: 1px dotted #000; outline-offset: -4px; }
+    .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--border); }
+    .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--border); }
 
     .btn-submit {
-      width: 100%; padding: 5px 14px; margin-top: 4px;
-      background: var(--win-face);
-      border-top:    2px solid var(--win-light);
-      border-left:   2px solid var(--win-light);
-      border-right:  2px solid var(--win-darker);
-      border-bottom: 2px solid var(--win-darker);
-      font-size: 11px; font-family: inherit; font-weight: bold;
-      cursor: pointer;
+      width: 100%; padding: 10px;
+      border: 2.5px solid var(--border);
+      border-radius: 10px;
+      font-size: .9rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; margin-top: 4px;
+      box-shadow: 3px 3px 0 var(--border);
+      transition: all .1s;
     }
-    .btn-submit:active {
-      border-top:    2px solid var(--win-darker);
-      border-left:   2px solid var(--win-darker);
-      border-right:  2px solid var(--win-light);
-      border-bottom: 2px solid var(--win-light);
-    }
-    .btn-submit.masuk  { color: var(--accent-green); }
-    .btn-submit.keluar { color: var(--accent-red); }
+    .btn-submit:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--border); }
+    .btn-submit.masuk  { background: #dcfce7; color: var(--green-txt); }
+    .btn-submit.keluar { background: #fee2e2; color: var(--red-txt); }
 
     /* ── FILTER ── */
-    .filter-bar { display: flex; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+    .filter-bar { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
     .filter-bar select, .filter-bar input {
-      background: white;
-      border-top: 2px solid var(--win-darker); border-left: 2px solid var(--win-darker);
-      border-right: 2px solid var(--win-light); border-bottom: 2px solid var(--win-light);
-      color: #000; padding: 3px 5px; font-size: 11px; font-family: inherit;
-      flex: 1; min-width: 100px; outline: none;
+      background: var(--input-bg); border: 2px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 7px 10px;
+      font-size: .8rem; font-family: inherit;
+      flex: 1; min-width: 110px; outline: none;
     }
-    .filter-date-row {
-      display: flex; gap: 6px; margin-bottom: 6px; align-items: center; flex-wrap: wrap;
-    }
-    .filter-date-row label { font-size: 11px; color: #000; white-space: nowrap; }
+    .filter-bar select:focus, .filter-bar input:focus { box-shadow: 2px 2px 0 var(--accent); }
+
+    .filter-date-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
+    .filter-date-row label { font-size: .75rem; font-weight: 700; white-space: nowrap; }
     .filter-date-row input[type=date] {
-      background: white;
-      border-top: 2px solid var(--win-darker); border-left: 2px solid var(--win-darker);
-      border-right: 2px solid var(--win-light); border-bottom: 2px solid var(--win-light);
-      color: #000; padding: 3px 5px; font-size: 11px; font-family: inherit;
+      background: var(--input-bg); border: 2px solid var(--border);
+      border-radius: 8px; color: var(--text); padding: 7px 10px;
+      font-size: .8rem; font-family: inherit;
       flex: 1; min-width: 120px; outline: none;
     }
-    .filter-actions {
-      display: flex; gap: 6px; margin-bottom: 10px; align-items: center;
-    }
-    .filter-info { font-size: 11px; color: var(--muted); flex: 1; }
 
-    /* ── STATUS BAR ── */
-    .statusbar {
-      border-top: 1px solid var(--win-dark);
-      padding: 3px 6px;
-      display: flex; gap: 4px;
-    }
-    .statusbar-pane {
-      border-top: 1px solid var(--win-darker); border-left: 1px solid var(--win-darker);
-      border-right: 1px solid var(--win-light); border-bottom: 1px solid var(--win-light);
-      padding: 1px 6px; font-size: 10px; color: var(--muted);
-    }
+    .filter-actions { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
+    .filter-info { font-size: .75rem; color: var(--muted); flex: 1; font-weight: 600; }
 
     /* ── TX LIST ── */
-    .empty { text-align: center; color: var(--muted); padding: 20px 0; font-size: 11px; }
+    .empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: .85rem; }
 
     .tx-item {
-      display: flex; align-items: center; gap: 8px;
-      padding: 5px 2px;
-      border-bottom: 1px solid var(--win-dark);
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 8px;
+      border-bottom: 2px dashed #e5e7eb;
+      transition: background .12s;
     }
-    .tx-item:hover { background: #000080; color: white; }
-    .tx-item:hover .tx-cat,
-    .tx-item:hover .tx-meta,
-    .tx-item:hover .tx-note,
-    .tx-item:hover .tx-amount,
-    .tx-item:hover .tx-del { color: white !important; }
-
     .tx-item:last-child { border-bottom: none; }
+    .tx-item:hover { background: #faf5ff; border-radius: 8px; }
+
     .tx-icon {
-      width: 28px; height: 28px;
+      width: 38px; height: 38px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 16px; flex-shrink: 0;
-      background: var(--win-face);
-      border-top: 1px solid var(--win-light); border-left: 1px solid var(--win-light);
-      border-right: 1px solid var(--win-darker); border-bottom: 1px solid var(--win-darker);
+      font-size: 1.2rem; flex-shrink: 0;
+      border: 2px solid var(--border);
+      box-shadow: 2px 2px 0 var(--border);
     }
+    .tx-icon.masuk  { background: #dcfce7; }
+    .tx-icon.keluar { background: #fee2e2; }
+
     .tx-info { flex: 1; min-width: 0; }
-    .tx-info .tx-cat  { font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tx-info .tx-meta { font-size: 10px; color: var(--muted); margin-top: 1px; }
-    .tx-info .tx-note { font-size: 10px; color: var(--muted); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-info .tx-cat  { font-size: .85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-info .tx-meta { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .tx-info .tx-note { font-size: .72rem; color: var(--muted); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
     .tx-right { text-align: right; flex-shrink: 0; }
-    .tx-right .tx-amount { font-size: 11px; font-weight: bold; }
-    .tx-right .tx-amount.masuk  { color: var(--accent-green); }
-    .tx-right .tx-amount.keluar { color: var(--accent-red); }
+    .tx-right .tx-amount { font-size: .88rem; font-weight: 700; }
+    .tx-right .tx-amount.masuk  { color: var(--green-txt); }
+    .tx-right .tx-amount.keluar { color: var(--red-txt); }
     .tx-right .tx-del {
       background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: 9px; margin-top: 2px; display: block; text-align: right;
+      font-size: .72rem; margin-top: 3px; display: block; text-align: right;
     }
-    .tx-del:hover { color: var(--accent-red); text-decoration: underline; }
+    .tx-del:hover { color: var(--red-txt); text-decoration: underline; }
 
-    /* ── GRAFIK ── */
-    .chart-tabs { display: flex; gap: 0; margin-bottom: 8px; }
+    /* ── CHART ── */
+    .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
     .chart-tab {
-      background: var(--win-face); border: 1px solid var(--win-dark);
-      padding: 3px 12px; font-size: 11px; font-family: inherit;
-      cursor: pointer; color: #000; border-bottom: none;
-      margin-right: 2px; position: relative; top: 1px;
+      background: #fff; border: 2px solid var(--border);
+      border-radius: 20px; padding: 5px 14px;
+      font-size: .78rem; font-weight: 700; font-family: inherit;
+      cursor: pointer; color: var(--muted);
+      box-shadow: 2px 2px 0 var(--border); transition: all .1s;
     }
     .chart-tab.active {
-      background: var(--win-face);
-      border-top: 2px solid var(--win-light);
-      border-left: 2px solid var(--win-light);
-      border-right: 2px solid var(--win-darker);
-      font-weight: bold; z-index: 1;
+      background: var(--accent); color: #fff;
+      box-shadow: 3px 3px 0 var(--border);
     }
-    .chart-tab-content {
-      border: 1px solid var(--win-dark);
-      border-top: 2px solid var(--win-light);
-      padding: 10px;
-    }
+    .chart-tab:hover:not(.active) { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--border); }
 
     .chart-wrap { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-    .chart-legend { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 5px; }
-    .legend-item { display: flex; align-items: center; gap: 6px; }
-    .legend-dot { width: 12px; height: 12px; border: 1px solid #000; flex-shrink: 0; }
-    .legend-info { flex: 1; min-width: 0; }
-    .legend-cat { font-size: 11px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .legend-amt { font-size: 10px; color: var(--muted); }
-    .legend-pct { font-size: 10px; font-weight: bold; color: #000; flex-shrink: 0; }
-
-    .chart-empty { text-align: center; color: var(--muted); padding: 16px 0; font-size: 11px; }
-
-    /* ── SCROLLBAR old school ── */
-    ::-webkit-scrollbar { width: 16px; }
-    ::-webkit-scrollbar-track { background: var(--win-face); }
-    ::-webkit-scrollbar-thumb {
-      background: var(--win-face);
-      border-top: 1px solid var(--win-light); border-left: 1px solid var(--win-light);
-      border-right: 1px solid var(--win-darker); border-bottom: 1px solid var(--win-darker);
+    .chart-legend { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 6px; }
+    .legend-item { display: flex; align-items: center; gap: 7px; }
+    .legend-dot {
+      width: 12px; height: 12px; border-radius: 3px;
+      border: 2px solid var(--border); flex-shrink: 0;
     }
+    .legend-info { flex: 1; min-width: 0; }
+    .legend-cat { font-size: .8rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .legend-amt { font-size: .7rem; color: var(--muted); }
+    .legend-pct { font-size: .75rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
+
+    .chart-empty { text-align: center; color: var(--muted); padding: 20px 0; font-size: .82rem; }
+
+    /* ── SECTION LABEL ── */
+    .sec-label {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--muted); margin-bottom: 8px;
+    }
+
+    /* ── LIST TOP ACTIONS ── */
+    .list-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .list-actions h3 { font-size: .85rem; font-weight: 700; }
 
     @media (max-width: 400px) {
       .summary { grid-template-columns: 1fr; }
@@ -333,165 +296,162 @@
 
 <div class="container">
 
-  <!-- MAIN WINDOW -->
-  <div class="win-window">
-    <div class="win-titlebar">
-      <div class="title-left">
-        <span class="title-icon">💰</span>
-        Catatan Keuangan - [Dompet Utama]
+  <!-- PAGE TITLE -->
+  <div class="page-title">
+    <h1>💰 Catatan Keuangan</h1>
+    <p>Kelola pemasukan & pengeluaran dengan mudah</p>
+  </div>
+
+  <!-- SUMMARY WINDOW -->
+  <div class="win">
+    <div class="win-bar">
+      <div class="win-bar-left">
+        <div class="win-dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <span class="win-title">Ringkasan Keuangan</span>
       </div>
-      <div class="win-title-btns">
-        <div class="win-title-btn">_</div>
-        <div class="win-title-btn">□</div>
-        <div class="win-title-btn">✕</div>
+      <div class="win-pill">dompet-utama.json</div>
+    </div>
+    <div class="win-body">
+      <div class="summary">
+        <div class="sum-card saldo">
+          <div class="s-label">💾 Saldo</div>
+          <div class="s-amount" id="sum-saldo">Rp 0</div>
+        </div>
+        <div class="sum-card masuk">
+          <div class="s-label">▲ Masuk</div>
+          <div class="s-amount" id="sum-masuk">Rp 0</div>
+        </div>
+        <div class="sum-card keluar">
+          <div class="s-label">▼ Keluar</div>
+          <div class="s-amount" id="sum-keluar">Rp 0</div>
+        </div>
       </div>
     </div>
-    <div class="menubar">
-      <span>File</span>
-      <span>Edit</span>
-      <span>Transaksi</span>
-      <span>Laporan</span>
-      <span>Bantuan</span>
+  </div>
+
+  <!-- GRAFIK WINDOW -->
+  <div class="win">
+    <div class="win-bar">
+      <div class="win-bar-left">
+        <div class="win-dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <span class="win-title">📊 Grafik Pengeluaran</span>
+      </div>
+      <div class="win-pill">chart-view.exe</div>
+    </div>
+    <div class="win-body">
+      <div class="chart-tabs">
+        <button class="chart-tab active" id="tab-donut" onclick="switchChart('donut')">🍩 Donut</button>
+        <button class="chart-tab" id="tab-bar"   onclick="switchChart('bar')">📊 Bar</button>
+      </div>
+      <div id="chart-content"></div>
+    </div>
+  </div>
+
+  <!-- FORM WINDOW -->
+  <div class="win">
+    <div class="win-bar">
+      <div class="win-bar-left">
+        <div class="win-dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <span class="win-title">✏️ Tambah Transaksi</span>
+      </div>
+      <div class="win-pill">new-transaction.form</div>
     </div>
     <div class="win-body">
 
-      <!-- SUMMARY -->
-      <div class="summary">
-        <div class="card saldo">
-          <div class="label">💾 Saldo</div>
-          <div class="amount" id="sum-saldo">Rp 0</div>
+      <div class="toggle-type">
+        <button id="btn-masuk" class="active-masuk" onclick="setType('masuk')">▲ Pemasukan</button>
+        <button id="btn-keluar" onclick="setType('keluar')">▼ Pengeluaran</button>
+      </div>
+
+      <div class="grid2">
+        <div class="form-group">
+          <label>📅 Tanggal</label>
+          <input type="date" id="f-tanggal" />
         </div>
-        <div class="card masuk">
-          <div class="label">▲ Pemasukan</div>
-          <div class="amount" id="sum-masuk">Rp 0</div>
-        </div>
-        <div class="card keluar">
-          <div class="label">▼ Pengeluaran</div>
-          <div class="amount" id="sum-keluar">Rp 0</div>
+        <div class="form-group">
+          <label>💵 Jumlah (Rp)</label>
+          <input type="number" id="f-jumlah" placeholder="0" min="0" />
         </div>
       </div>
 
-      <!-- GRAFIK WINDOW -->
-      <div class="win-window">
-        <div class="win-titlebar">
-          <div class="title-left"><span class="title-icon">📊</span> Grafik Pengeluaran per Kategori</div>
-          <div class="win-title-btns">
-            <div class="win-title-btn">_</div>
-            <div class="win-title-btn">□</div>
-          </div>
+      <div class="form-group">
+        <label>🏷️ Kategori</label>
+        <select id="f-kategori"></select>
+      </div>
+
+      <div class="form-group">
+        <label>📝 Catatan (opsional)</label>
+        <textarea id="f-catatan" placeholder="Tulis catatan..."></textarea>
+      </div>
+
+      <button class="btn-submit masuk" id="btn-submit" onclick="tambahTransaksi()">+ Tambah Pemasukan</button>
+    </div>
+  </div>
+
+  <!-- LIST WINDOW -->
+  <div class="win">
+    <div class="win-bar">
+      <div class="win-bar-left">
+        <div class="win-dots">
+          <div class="dot red"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
         </div>
-        <div class="win-body">
-          <div class="chart-tabs">
-            <button class="chart-tab active" id="tab-donut" onclick="switchChart('donut')">Pie Chart</button>
-            <button class="chart-tab" id="tab-bar" onclick="switchChart('bar')">Bar Chart</button>
-          </div>
-          <div class="chart-tab-content">
-            <div id="chart-content"></div>
-          </div>
+        <span class="win-title">📋 Riwayat Transaksi</span>
+      </div>
+      <div class="win-pill">transactions.log</div>
+    </div>
+    <div class="win-body">
+
+      <div class="list-actions">
+        <h3>Daftar Transaksi</h3>
+        <div style="display:flex;gap:6px;">
+          <button class="btn" onclick="eksporCSV()">⬇ CSV</button>
+          <button class="btn" onclick="hapusSemua()" style="color:#dc2626;">🗑</button>
         </div>
       </div>
 
-      <!-- FORM WINDOW -->
-      <div class="win-window">
-        <div class="win-titlebar">
-          <div class="title-left"><span class="title-icon">✏️</span> Tambah Transaksi Baru</div>
-          <div class="win-title-btns">
-            <div class="win-title-btn">_</div>
-            <div class="win-title-btn">□</div>
-          </div>
-        </div>
-        <div class="win-body">
-          <div class="groupbox" style="margin-bottom:10px;">
-            <span class="groupbox-label">Jenis Transaksi</span>
-            <div class="toggle-type">
-              <button id="btn-masuk" class="active-masuk" onclick="setType('masuk')">Pemasukan</button>
-              <button id="btn-keluar" onclick="setType('keluar')">Pengeluaran</button>
-            </div>
-          </div>
-
-          <div class="grid2">
-            <div class="form-group">
-              <label>Tanggal:</label>
-              <input type="date" id="f-tanggal" />
-            </div>
-            <div class="form-group">
-              <label>Jumlah (Rp):</label>
-              <input type="number" id="f-jumlah" placeholder="0" min="0" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Kategori:</label>
-            <select id="f-kategori"></select>
-          </div>
-
-          <div class="form-group">
-            <label>Catatan (opsional):</label>
-            <textarea id="f-catatan" placeholder="Tulis catatan..."></textarea>
-          </div>
-
-          <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:8px;">
-            <button class="btn-submit masuk" id="btn-submit" onclick="tambahTransaksi()">OK</button>
-            <button class="win-btn" onclick="document.getElementById('f-jumlah').value='';document.getElementById('f-catatan').value=''">Batal</button>
-          </div>
-        </div>
+      <!-- Filter -->
+      <div class="filter-bar">
+        <select id="filter-type" onchange="renderList()">
+          <option value="">Semua Jenis</option>
+          <option value="masuk">Pemasukan</option>
+          <option value="keluar">Pengeluaran</option>
+        </select>
+        <select id="filter-cat" onchange="renderList()">
+          <option value="">Semua Kategori</option>
+        </select>
+      </div>
+      <div class="filter-date-row">
+        <label>Dari</label>
+        <input type="date" id="filter-dari" onchange="renderList()" />
+        <label>Sampai</label>
+        <input type="date" id="filter-sampai" onchange="renderList()" />
+      </div>
+      <div class="filter-actions">
+        <span class="filter-info" id="filter-info"></span>
+        <button class="btn" onclick="resetFilter()">↺ Reset</button>
       </div>
 
-      <!-- LIST WINDOW -->
-      <div class="win-window">
-        <div class="win-titlebar">
-          <div class="title-left"><span class="title-icon">📋</span> Riwayat Transaksi</div>
-          <div class="win-title-btns">
-            <div class="win-title-btn">_</div>
-            <div class="win-title-btn">□</div>
-          </div>
-        </div>
-        <div class="menubar">
-          <span onclick="eksporCSV()" style="cursor:pointer">💾 Ekspor CSV</span>
-          <span onclick="hapusSemua()" style="cursor:pointer;color:#800000">🗑 Hapus Semua</span>
-        </div>
-        <div class="win-body">
-          <!-- Filter -->
-          <div class="groupbox" style="margin-bottom:10px;">
-            <span class="groupbox-label">Filter</span>
-            <div class="filter-bar">
-              <select id="filter-type" onchange="renderList()">
-                <option value="">Semua Jenis</option>
-                <option value="masuk">Pemasukan</option>
-                <option value="keluar">Pengeluaran</option>
-              </select>
-              <select id="filter-cat" onchange="renderList()">
-                <option value="">Semua Kategori</option>
-              </select>
-            </div>
-            <div class="filter-date-row">
-              <label>Dari:</label>
-              <input type="date" id="filter-dari" onchange="renderList()" />
-              <label>Sampai:</label>
-              <input type="date" id="filter-sampai" onchange="renderList()" />
-            </div>
-            <div class="filter-actions">
-              <span class="filter-info" id="filter-info"></span>
-              <button class="win-btn" onclick="resetFilter()">↺ Reset</button>
-            </div>
-          </div>
+      <div id="tx-list"></div>
+    </div>
+  </div>
 
-          <div id="tx-list"></div>
-        </div>
-        <div class="statusbar">
-          <div class="statusbar-pane" id="status-bar">Siap</div>
-          <div class="statusbar-pane">localStorage</div>
-          <div class="statusbar-pane">v1.0</div>
-        </div>
-      </div>
-
-    </div><!-- /win-body -->
-  </div><!-- /win-window main -->
-
-</div><!-- /container -->
+</div>
 
 <script>
-  // ── DATA ──────────────────────────────────────────────
   const CAT = {
     masuk:  ['Gaji', 'Freelance', 'Bonus', 'Investasi', 'Hadiah', 'Lainnya'],
     keluar: ['Makan & Minum', 'Transportasi', 'Belanja', 'Tagihan', 'Hiburan',
@@ -507,14 +467,12 @@
   let tipe = 'masuk';
 
   function simpan() { localStorage.setItem('keuangan_data', JSON.stringify(data)); }
-  function fmt(n) {
-    return 'Rp ' + Math.abs(n).toLocaleString('id-ID');
-  }
+  function fmt(n)   { return 'Rp ' + Math.abs(n).toLocaleString('id-ID'); }
 
   // ── GRAFIK ────────────────────────────────────────────
   const PALETTE = [
-    '#800000','#000080','#008000','#808000','#008080',
-    '#800080','#c0c000','#0000c0','#c04000','#004040',
+    '#f87171','#fb923c','#facc15','#4ade80','#34d399',
+    '#60a5fa','#a78bfa','#f472b6','#94a3b8','#2dd4bf',
   ];
   let chartMode = 'donut';
 
@@ -528,59 +486,45 @@
   function renderChart() {
     const keluar = data.filter(d => d.tipe === 'keluar');
     const el = document.getElementById('chart-content');
-
     if (!keluar.length) {
-      el.innerHTML = '<div class="chart-empty">[Tidak ada data pengeluaran]</div>';
+      el.innerHTML = '<div class="chart-empty">✨ Belum ada data pengeluaran</div>';
       return;
     }
-
     const map = {};
-    keluar.forEach(d => { map[d.kategori] = (map[d.kategori] || 0) + d.jumlah; });
-    const total = Object.values(map).reduce((s,v) => s+v, 0);
-    const items = Object.entries(map)
-      .sort((a,b) => b[1]-a[1])
-      .map(([cat, val], i) => ({ cat, val, pct: val/total, color: PALETTE[i % PALETTE.length] }));
-
-    if (chartMode === 'donut') {
-      renderDonut(el, items, total);
-    } else {
-      renderBar(el, items, total);
-    }
+    keluar.forEach(d => { map[d.kategori] = (map[d.kategori]||0) + d.jumlah; });
+    const total = Object.values(map).reduce((s,v)=>s+v,0);
+    const items = Object.entries(map).sort((a,b)=>b[1]-a[1])
+      .map(([cat,val],i) => ({cat, val, pct: val/total, color: PALETTE[i%PALETTE.length]}));
+    chartMode === 'donut' ? renderDonut(el,items,total) : renderBar(el,items,total);
   }
 
   function renderDonut(el, items, total) {
-    const SIZE = 160, CX = SIZE/2, CY = SIZE/2, R = 60, RI = 34;
-    const GAP = 0.03;
-    let paths = '';
-
-    if (items.length === 1) {
-      paths = `<circle cx="${CX}" cy="${CY}" r="${R}" fill="${items[0].color}"/>
-               <circle cx="${CX}" cy="${CY}" r="${RI}" fill="#c0c0c0"/>`;
+    const SIZE=180, CX=90, CY=90, R=68, RI=40, GAP=0.04;
+    let paths='';
+    if (items.length===1) {
+      paths=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="${items[0].color}" stroke="#1a1a1a" stroke-width="2"/>
+             <circle cx="${CX}" cy="${CY}" r="${RI}" fill="#fefce8" stroke="#1a1a1a" stroke-width="1.5"/>`;
     } else {
-      let angle = -Math.PI / 2;
-      items.forEach(item => {
-        const sweep = item.pct * 2 * Math.PI - GAP;
-        if (sweep <= 0) return;
-        const a1 = angle + GAP/2, a2 = a1 + sweep;
-        const large = sweep > Math.PI ? 1 : 0;
-        const x1o = CX + R  * Math.cos(a1), y1o = CY + R  * Math.sin(a1);
-        const x2o = CX + R  * Math.cos(a2), y2o = CY + R  * Math.sin(a2);
-        const x1i = CX + RI * Math.cos(a2), y1i = CY + RI * Math.sin(a2);
-        const x2i = CX + RI * Math.cos(a1), y2i = CY + RI * Math.sin(a1);
-        const d = `M${x1o.toFixed(2)},${y1o.toFixed(2)} A${R},${R} 0 ${large},1 ${x2o.toFixed(2)},${y2o.toFixed(2)} L${x1i.toFixed(2)},${y1i.toFixed(2)} A${RI},${RI} 0 ${large},0 ${x2i.toFixed(2)},${y2i.toFixed(2)} Z`;
-        paths += `<path d="${d}" fill="${item.color}" stroke="#c0c0c0" stroke-width="1"/>`;
-        angle += item.pct * 2 * Math.PI;
+      let angle=-Math.PI/2;
+      items.forEach(item=>{
+        const sweep=item.pct*2*Math.PI-GAP; if(sweep<=0)return;
+        const a1=angle+GAP/2, a2=a1+sweep, lg=sweep>Math.PI?1:0;
+        const x1o=CX+R*Math.cos(a1), y1o=CY+R*Math.sin(a1);
+        const x2o=CX+R*Math.cos(a2), y2o=CY+R*Math.sin(a2);
+        const x1i=CX+RI*Math.cos(a2), y1i=CY+RI*Math.sin(a2);
+        const x2i=CX+RI*Math.cos(a1), y2i=CY+RI*Math.sin(a1);
+        const d=`M${x1o.toFixed(1)},${y1o.toFixed(1)} A${R},${R} 0 ${lg},1 ${x2o.toFixed(1)},${y2o.toFixed(1)} L${x1i.toFixed(1)},${y1i.toFixed(1)} A${RI},${RI} 0 ${lg},0 ${x2i.toFixed(1)},${y2i.toFixed(1)} Z`;
+        paths+=`<path d="${d}" fill="${item.color}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+        angle+=item.pct*2*Math.PI;
       });
     }
-
-    const fmtShort = n => {
-      if (n >= 1e9) return 'Rp'+(n/1e9).toFixed(1)+'M';
-      if (n >= 1e6) return 'Rp'+(n/1e6).toFixed(1)+'jt';
-      if (n >= 1e3) return 'Rp'+(n/1e3).toFixed(0)+'rb';
-      return 'Rp'+n;
+    const fmtS=n=>{
+      if(n>=1e9)return'Rp'+(n/1e9).toFixed(1)+'M';
+      if(n>=1e6)return'Rp'+(n/1e6).toFixed(1)+'jt';
+      if(n>=1e3)return'Rp'+(n/1e3).toFixed(0)+'rb';
+      return'Rp'+n;
     };
-
-    const legendHtml = items.map(item => `
+    const leg=items.map(item=>`
       <div class="legend-item">
         <div class="legend-dot" style="background:${item.color}"></div>
         <div class="legend-info">
@@ -589,165 +533,130 @@
         </div>
         <div class="legend-pct">${(item.pct*100).toFixed(1)}%</div>
       </div>`).join('');
-
-    el.innerHTML = `
+    el.innerHTML=`
       <div class="chart-wrap">
         <svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}" style="flex-shrink:0;display:block">
           ${paths}
-          <text x="${CX}" y="${CY-6}" text-anchor="middle" fill="#000" font-size="8" font-family="Arial">Total</text>
-          <text x="${CX}" y="${CY+8}" text-anchor="middle" fill="#000" font-size="9" font-weight="bold" font-family="Arial">${fmtShort(total)}</text>
+          <text x="${CX}" y="${CY-8}" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Space Grotesk,sans-serif" font-weight="600">Total</text>
+          <text x="${CX}" y="${CY+8}" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="700" font-family="Space Grotesk,sans-serif">${fmtS(total)}</text>
         </svg>
-        <div class="chart-legend">${legendHtml}</div>
+        <div class="chart-legend">${leg}</div>
       </div>`;
   }
 
   function renderBar(el, items, total) {
-    const barRows = items.map(item => {
-      const w = (item.pct * 100).toFixed(1);
-      return `
-        <div style="margin-bottom:8px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;font-size:11px;">
-            <span style="font-weight:bold;display:flex;align-items:center;gap:5px;">
-              <span style="display:inline-block;width:10px;height:10px;background:${item.color};border:1px solid #000;"></span>
-              ${escHtml(item.cat)}
-            </span>
-            <span style="color:#444;font-size:10px;">${fmt(item.val)} <b>${w}%</b></span>
-          </div>
-          <div style="background:#fff;border-top:1px solid #808080;border-left:1px solid #808080;border-right:1px solid #fff;border-bottom:1px solid #fff;height:14px;overflow:hidden;">
-            <div style="width:${w}%;background:${item.color};height:100%;"></div>
-          </div>
-        </div>`;
+    const rows=items.map(item=>{
+      const w=(item.pct*100).toFixed(1);
+      return`<div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:.8rem;">
+          <span style="font-weight:700;display:flex;align-items:center;gap:6px;">
+            <span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${item.color};border:2px solid #1a1a1a;"></span>
+            ${escHtml(item.cat)}
+          </span>
+          <span style="color:#6b7280;font-size:.72rem;">${fmt(item.val)} <b style="color:#7c3aed">${w}%</b></span>
+        </div>
+        <div style="background:#f3f4f6;border:2px solid #1a1a1a;border-radius:20px;height:14px;overflow:hidden;">
+          <div style="width:${w}%;background:${item.color};height:100%;border-radius:20px;"></div>
+        </div>
+      </div>`;
     }).join('');
-    el.innerHTML = `<div>${barRows}</div>`;
+    el.innerHTML=`<div>${rows}</div>`;
   }
 
   // ── INIT ──────────────────────────────────────────────
   function init() {
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('f-tanggal').value = today;
-    setType('masuk');
-    updateSummary();
-    renderChart();
-    renderList();
+    document.getElementById('f-tanggal').value = new Date().toISOString().split('T')[0];
+    setType('masuk'); updateSummary(); renderChart(); renderList();
   }
 
   function resetFilter() {
-    document.getElementById('filter-type').value  = '';
-    document.getElementById('filter-cat').value   = '';
-    document.getElementById('filter-dari').value  = '';
-    document.getElementById('filter-sampai').value= '';
+    ['filter-type','filter-cat','filter-dari','filter-sampai'].forEach(id=>document.getElementById(id).value='');
     renderList();
   }
 
   function setType(t) {
-    tipe = t;
-    document.getElementById('btn-masuk').className  = t === 'masuk'  ? 'active-masuk'  : '';
-    document.getElementById('btn-keluar').className = t === 'keluar' ? 'active-keluar' : '';
-    const btn = document.getElementById('btn-submit');
-    btn.textContent = t === 'masuk' ? 'OK - Tambah Pemasukan' : 'OK - Tambah Pengeluaran';
-    btn.className = 'btn-submit ' + t;
-    const sel = document.getElementById('f-kategori');
-    sel.innerHTML = CAT[t].map(c => `<option>${c}</option>`).join('');
+    tipe=t;
+    document.getElementById('btn-masuk').className  = t==='masuk'  ? 'active-masuk'  : '';
+    document.getElementById('btn-keluar').className = t==='keluar' ? 'active-keluar' : '';
+    const btn=document.getElementById('btn-submit');
+    btn.textContent = t==='masuk' ? '+ Tambah Pemasukan' : '+ Tambah Pengeluaran';
+    btn.className='btn-submit '+t;
+    document.getElementById('f-kategori').innerHTML = CAT[t].map(c=>`<option>${c}</option>`).join('');
     renderFilterCat();
   }
 
   function renderFilterCat() {
-    const all = [...new Set(data.map(d => d.kategori))];
-    const sel = document.getElementById('filter-cat');
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">Semua Kategori</option>' +
-      all.map(c => `<option ${c===cur?'selected':''}>${c}</option>`).join('');
+    const all=[...new Set(data.map(d=>d.kategori))];
+    const sel=document.getElementById('filter-cat');
+    const cur=sel.value;
+    sel.innerHTML='<option value="">Semua Kategori</option>'+
+      all.map(c=>`<option ${c===cur?'selected':''}>${c}</option>`).join('');
   }
 
-  // ── TAMBAH ────────────────────────────────────────────
   function tambahTransaksi() {
-    const tanggal = document.getElementById('f-tanggal').value;
-    const jumlah  = parseFloat(document.getElementById('f-jumlah').value);
-    const kategori= document.getElementById('f-kategori').value;
-    const catatan = document.getElementById('f-catatan').value.trim();
-
-    if (!tanggal) return alert('Pilih tanggal terlebih dahulu.');
-    if (!jumlah || jumlah <= 0) return alert('Masukkan jumlah yang valid.');
-
-    data.unshift({ id: Date.now(), tipe, tanggal, jumlah, kategori, catatan });
+    const tanggal=document.getElementById('f-tanggal').value;
+    const jumlah=parseFloat(document.getElementById('f-jumlah').value);
+    const kategori=document.getElementById('f-kategori').value;
+    const catatan=document.getElementById('f-catatan').value.trim();
+    if(!tanggal) return alert('Pilih tanggal terlebih dahulu.');
+    if(!jumlah||jumlah<=0) return alert('Masukkan jumlah yang valid.');
+    data.unshift({id:Date.now(),tipe,tanggal,jumlah,kategori,catatan});
     simpan();
-    document.getElementById('f-jumlah').value = '';
-    document.getElementById('f-catatan').value = '';
-    updateSummary();
-    renderChart();
-    renderList();
-    renderFilterCat();
-    setStatus('Transaksi berhasil ditambahkan.');
+    document.getElementById('f-jumlah').value='';
+    document.getElementById('f-catatan').value='';
+    updateSummary(); renderChart(); renderList(); renderFilterCat();
   }
 
-  // ── HAPUS ─────────────────────────────────────────────
   function hapusItem(id) {
-    if (!confirm('Hapus transaksi ini?')) return;
-    data = data.filter(d => d.id !== id);
+    if(!confirm('Hapus transaksi ini?')) return;
+    data=data.filter(d=>d.id!==id);
     simpan(); updateSummary(); renderChart(); renderList(); renderFilterCat();
-    setStatus('Transaksi dihapus.');
   }
   function hapusSemua() {
-    if (!data.length) return;
-    if (!confirm('Hapus SEMUA transaksi? Tindakan ini tidak bisa dibatalkan.')) return;
-    data = []; simpan(); updateSummary(); renderChart(); renderList(); renderFilterCat();
-    setStatus('Semua transaksi dihapus.');
+    if(!data.length) return;
+    if(!confirm('Hapus SEMUA transaksi? Tindakan ini tidak bisa dibatalkan.')) return;
+    data=[]; simpan(); updateSummary(); renderChart(); renderList(); renderFilterCat();
   }
 
-  function setStatus(msg) {
-    const s = document.getElementById('status-bar');
-    if (s) { s.textContent = msg; setTimeout(() => s.textContent = 'Siap', 3000); }
-  }
-
-  // ── SUMMARY ───────────────────────────────────────────
   function updateSummary() {
-    const totalMasuk  = data.filter(d=>d.tipe==='masuk').reduce((s,d)=>s+d.jumlah,0);
-    const totalKeluar = data.filter(d=>d.tipe==='keluar').reduce((s,d)=>s+d.jumlah,0);
-    const saldo = totalMasuk - totalKeluar;
-    document.getElementById('sum-masuk').textContent  = fmt(totalMasuk);
-    document.getElementById('sum-keluar').textContent = fmt(totalKeluar);
-    const el = document.getElementById('sum-saldo');
-    el.textContent = (saldo < 0 ? '-' : '') + fmt(saldo);
-    el.style.color = saldo < 0 ? 'var(--accent-red)' : 'var(--accent-blue)';
+    const masuk=data.filter(d=>d.tipe==='masuk').reduce((s,d)=>s+d.jumlah,0);
+    const keluar=data.filter(d=>d.tipe==='keluar').reduce((s,d)=>s+d.jumlah,0);
+    const saldo=masuk-keluar;
+    document.getElementById('sum-masuk').textContent=fmt(masuk);
+    document.getElementById('sum-keluar').textContent=fmt(keluar);
+    const el=document.getElementById('sum-saldo');
+    el.textContent=(saldo<0?'-':'')+fmt(saldo);
+    el.style.color=saldo<0?'var(--red-txt)':'var(--blue-txt)';
   }
 
-  // ── RENDER LIST ───────────────────────────────────────
   function renderList() {
-    const fType  = document.getElementById('filter-type').value;
-    const fCat   = document.getElementById('filter-cat').value;
-    const fDari  = document.getElementById('filter-dari').value;
-    const fSampai= document.getElementById('filter-sampai').value;
-
-    let list = data.filter(d => {
-      if (fType   && d.tipe     !== fType)  return false;
-      if (fCat    && d.kategori !== fCat)   return false;
-      if (fDari   && d.tanggal  < fDari)    return false;
-      if (fSampai && d.tanggal  > fSampai)  return false;
+    const fType=document.getElementById('filter-type').value;
+    const fCat=document.getElementById('filter-cat').value;
+    const fDari=document.getElementById('filter-dari').value;
+    const fSampai=document.getElementById('filter-sampai').value;
+    let list=data.filter(d=>{
+      if(fType&&d.tipe!==fType) return false;
+      if(fCat&&d.kategori!==fCat) return false;
+      if(fDari&&d.tanggal<fDari) return false;
+      if(fSampai&&d.tanggal>fSampai) return false;
       return true;
     });
-
-    const hasFilter = fType || fCat || fDari || fSampai;
-    document.getElementById('filter-info').textContent = hasFilter
-      ? `${list.length} dari ${data.length} transaksi`
-      : `${data.length} transaksi`;
-
-    const el = document.getElementById('tx-list');
-    if (!list.length) {
-      el.innerHTML = '<div class="empty">[Tidak ada transaksi] 📭</div>';
-      return;
+    const hasFilter=fType||fCat||fDari||fSampai;
+    document.getElementById('filter-info').textContent=hasFilter
+      ?`${list.length} dari ${data.length} transaksi`:`${data.length} transaksi`;
+    const el=document.getElementById('tx-list');
+    if(!list.length){
+      el.innerHTML='<div class="empty">✨ Belum ada transaksi 📭</div>'; return;
     }
-
-    el.innerHTML = list.map(d => {
-      const icon = (ICON[d.tipe] && ICON[d.tipe][d.kategori]) || (d.tipe==='masuk'?'💵':'💸');
-      const tgl  = new Date(d.tanggal + 'T00:00:00').toLocaleDateString('id-ID',
-                    { day:'2-digit', month:'short', year:'numeric' });
-      return `
-      <div class="tx-item">
-        <div class="tx-icon">${icon}</div>
+    el.innerHTML=list.map(d=>{
+      const icon=(ICON[d.tipe]&&ICON[d.tipe][d.kategori])||(d.tipe==='masuk'?'💵':'💸');
+      const tgl=new Date(d.tanggal+'T00:00:00').toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
+      return`<div class="tx-item">
+        <div class="tx-icon ${d.tipe}">${icon}</div>
         <div class="tx-info">
           <div class="tx-cat">${d.kategori}</div>
           <div class="tx-meta">${tgl}</div>
-          ${d.catatan ? `<div class="tx-note">${escHtml(d.catatan)}</div>` : ''}
+          ${d.catatan?`<div class="tx-note">${escHtml(d.catatan)}</div>`:''}
         </div>
         <div class="tx-right">
           <div class="tx-amount ${d.tipe}">${d.tipe==='masuk'?'+':'-'}${fmt(d.jumlah)}</div>
@@ -757,45 +666,39 @@
     }).join('');
   }
 
-  function escHtml(s) {
+  function escHtml(s){
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  // ── EKSPOR CSV ────────────────────────────────────────
   function eksporCSV() {
-    if (!data.length) return alert('Belum ada transaksi untuk diekspor.');
-    const fType  = document.getElementById('filter-type').value;
-    const fCat   = document.getElementById('filter-cat').value;
-    const fDari  = document.getElementById('filter-dari').value;
-    const fSampai= document.getElementById('filter-sampai').value;
-    const hasFilter = fType || fCat || fDari || fSampai;
-    const list = hasFilter ? data.filter(d => {
-      if (fType   && d.tipe     !== fType)  return false;
-      if (fCat    && d.kategori !== fCat)   return false;
-      if (fDari   && d.tanggal  < fDari)    return false;
-      if (fSampai && d.tanggal  > fSampai)  return false;
+    if(!data.length) return alert('Belum ada transaksi untuk diekspor.');
+    const fType=document.getElementById('filter-type').value;
+    const fCat=document.getElementById('filter-cat').value;
+    const fDari=document.getElementById('filter-dari').value;
+    const fSampai=document.getElementById('filter-sampai').value;
+    const hasFilter=fType||fCat||fDari||fSampai;
+    const list=hasFilter?data.filter(d=>{
+      if(fType&&d.tipe!==fType) return false;
+      if(fCat&&d.kategori!==fCat) return false;
+      if(fDari&&d.tanggal<fDari) return false;
+      if(fSampai&&d.tanggal>fSampai) return false;
       return true;
-    }) : data;
-    if (!list.length) return alert('Tidak ada transaksi yang cocok dengan filter aktif.');
-    const BOM = '\uFEFF';
-    const header = ['Tanggal', 'Jenis', 'Kategori', 'Jumlah (Rp)', 'Catatan'];
-    const rows = list.map(d => [
-      d.tanggal,
-      d.tipe === 'masuk' ? 'Pemasukan' : 'Pengeluaran',
-      csvEsc(d.kategori), d.jumlah, csvEsc(d.catatan || ''),
-    ]);
-    const csv = BOM + [header, ...rows].map(r => r.join(',')).join('\r\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = `keuangan_${new Date().toISOString().slice(0,10)}.csv`;
+    }):data;
+    if(!list.length) return alert('Tidak ada transaksi yang cocok dengan filter aktif.');
+    const BOM='\uFEFF';
+    const header=['Tanggal','Jenis','Kategori','Jumlah (Rp)','Catatan'];
+    const rows=list.map(d=>[d.tanggal,d.tipe==='masuk'?'Pemasukan':'Pengeluaran',csvEsc(d.kategori),d.jumlah,csvEsc(d.catatan||'')]);
+    const csv=BOM+[header,...rows].map(r=>r.join(',')).join('\r\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=`keuangan_${new Date().toISOString().slice(0,10)}.csv`;
     a.click(); URL.revokeObjectURL(url);
-    setStatus('File CSV berhasil diekspor.');
   }
 
-  function csvEsc(val) {
-    const s = String(val);
-    if (/[,"\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  function csvEsc(val){
+    const s=String(val);
+    if(/[,"\n\r]/.test(s)) return'"'+s.replace(/"/g,'""')+'"';
     return s;
   }
 
