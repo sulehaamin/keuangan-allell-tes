@@ -1,5 +1,13 @@
 [
   {
+    "id": 1784650399494,
+    "tipe": "keluar",
+    "tanggal": "2026-07-21",
+    "jumlah": 4000,
+    "kategori": "Transportasi",
+    "catatan": "parkir"
+  },
+  {
     "id": 1784649778635,
     "tipe": "keluar",
     "tanggal": "2026-07-21",
