@@ -569,6 +569,7 @@
         const cloudIds = new Set(cloudData.map(d => d.id));
         const localOnly = localData.filter(d => !cloudIds.has(d.id));
         data = [...cloudData, ...localOnly];
+        data.sort((a, b) => b.id - a.id);
         localStorage.setItem('keuangan_data', JSON.stringify(data));
         setBadge('online', 'Cloud');
         if (localOnly.length > 0) pushCloud();
@@ -587,11 +588,32 @@
     if (!ghToken) { setBadge('offline', 'Offline'); return; }
     try {
       setBadge('syncing', 'Saving...');
+      // 1. Fetch latest data.json from cloud (avoid overwriting Telegram entries)
       const metaRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/data.json?ref=${GH_BRANCH}`, {
         headers: { 'Authorization': 'token ' + ghToken }
       });
       let sha = dataSha;
-      if (metaRes.ok) { sha = (await metaRes.json()).sha; dataSha = sha; }
+      let cloudData = [];
+      if (metaRes.ok) {
+        const meta = await metaRes.json();
+        sha = meta.sha; dataSha = sha;
+        // Decode cloud content
+        try {
+          cloudData = JSON.parse(atob(meta.content.replace(/\n/g, '')));
+        } catch(e) { cloudData = []; }
+      }
+      // 2. Merge: cloud entries + local-only entries (by id)
+      const cloudIds = new Set(cloudData.map(d => d.id));
+      const localOnly = data.filter(d => !cloudIds.has(d.id));
+      // Also keep local edits to existing entries (by id, prefer local version)
+      const localIds = new Set(data.map(d => d.id));
+      const cloudOnly = cloudData.filter(d => !localIds.has(d.id));
+      const merged = [...data, ...cloudOnly];
+      // Sort by id descending (newest first)
+      merged.sort((a, b) => b.id - a.id);
+      data = merged;
+      localStorage.setItem('keuangan_data', JSON.stringify(data));
+      // 3. Push merged data
       const payload = {
         message: 'Update from webapp ' + new Date().toISOString(),
         content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
