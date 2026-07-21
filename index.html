@@ -286,6 +286,51 @@
     .list-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .list-actions h3 { font-size: .85rem; font-weight: 700; }
 
+    /* ── CLOUD SYNC BADGE ── */
+    .cloud-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: .65rem; font-weight: 700; padding: 2px 8px;
+      border-radius: 20px; border: 1.5px solid var(--border);
+    }
+    .cloud-badge.online  { background: #dcfce7; color: var(--green-txt); }
+    .cloud-badge.offline { background: #fee2e2; color: var(--red-txt); }
+    .cloud-badge.syncing { background: #fef9c3; color: #a16207; }
+    .cloud-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: currentColor;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    /* ── SETTINGS MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 999; padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--win-bg); border: 2.5px solid var(--border);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+      max-width: 400px; width: 100%; overflow: hidden;
+    }
+    .modal-bar {
+      background: var(--titlebar); border-bottom: 2.5px solid var(--border);
+      padding: 7px 10px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-bar h3 { font-size: .82rem; font-weight: 700; }
+    .modal-bar button {
+      background: none; border: none; font-size: 1rem; cursor: pointer;
+      color: var(--text); font-weight: 700;
+    }
+    .modal-body { padding: 16px; }
+    .modal-body label { font-size: .75rem; font-weight: 700; display: block; margin-bottom: 4px; }
+    .modal-body input {
+      background: var(--input-bg); border: 2px solid var(--border);
+      border-radius: 8px; padding: 8px 10px; font-size: .82rem;
+      font-family: inherit; width: 100%; margin-bottom: 12px; outline: none;
+    }
+    .modal-body input:focus { box-shadow: 3px 3px 0 var(--accent); }
+    .modal-body .hint { font-size: .7rem; color: var(--muted); margin-bottom: 12px; line-height: 1.4; }
+    .modal-body .btn-row { display: flex; gap: 8px; }
     @media (max-width: 400px) {
       .summary { grid-template-columns: 1fr; }
       .grid2 { grid-template-columns: 1fr; }
@@ -313,7 +358,10 @@
         </div>
         <span class="win-title">Ringkasan Keuangan</span>
       </div>
-      <div class="win-pill">dompet-utama.json</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span class="cloud-badge offline" id="cloud-badge"><span class="cloud-dot"></span> Offline</span>
+        <div class="win-pill">dompet-utama.json</div>
+      </div>
     </div>
     <div class="win-body">
       <div class="summary">
@@ -418,6 +466,8 @@
       <div class="list-actions">
         <h3>Daftar Transaksi</h3>
         <div style="display:flex;gap:6px;">
+          <button class="btn" onclick="syncCloud()" title="Sync dari cloud">🔄</button>
+          <button class="btn" onclick="openSettings()" title="Settings">⚙️</button>
           <button class="btn" onclick="eksporCSV()">⬇ CSV</button>
           <button class="btn" onclick="hapusSemua()" style="color:#dc2626;">🗑</button>
         </div>
@@ -448,9 +498,28 @@
       <div id="tx-list"></div>
     </div>
   </div>
-
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <div class="modal-bar">
+        <h3>⚙️ Settings Cloud Sync</h3>
+        <button onclick="closeSettings()">✕</button>
+      </div>
+      <div class="modal-body">
+        <label>🔑 GitHub Token (untuk write)</label>
+        <input type="password" id="set-token" placeholder="ghp_..." />
+        <div class="hint">
+          Token disimpan lokal di browser. Hanya dipakai untuk menulis ke <code>data.json</code>.
+          Buat token di: GitHub → Settings → Developer settings → Personal access tokens.
+        </div>
+        <div class="btn-row">
+          <button class="btn" onclick="closeSettings()" style="flex:1;">Batal</button>
+          <button class="btn-submit masuk" onclick="saveSettings()" style="flex:1;box-shadow:3px 3px 0 var(--border);">💾 Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
 <script>
   const CAT = {
     masuk:  ['Gaji', 'Freelance', 'Bonus', 'Investasi', 'Hadiah', 'Lainnya'],
@@ -463,10 +532,109 @@
               'Hiburan':'🎮','Kesehatan':'💊','Pendidikan':'📚','Tabungan':'🏦','Lainnya':'💸' },
   };
 
-  let data = JSON.parse(localStorage.getItem('keuangan_data') || '[]');
+  // ── CLOUD SYNC CONFIG ──
+  const GH_REPO = 'sulehaamin/keuangan-allell-tes';
+  const GH_BRANCH = 'main';
+  const DATA_URL = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/data.json`;
+  const API_BASE = `https://api.github.com/repos/${GH_REPO}/contents/data.json`;
+  let ghToken = localStorage.getItem('gh_token') || '';
+  let dataSha = null;
+  let isSyncing = false;
+  let autoRefreshTimer = null;
+
+  let data = [];
   let tipe = 'masuk';
 
-  function simpan() { localStorage.setItem('keuangan_data', JSON.stringify(data)); }
+  function simpan() {
+    localStorage.setItem('keuangan_data', JSON.stringify(data));
+    pushCloud();
+  }
+
+  function setBadge(state, text) {
+    const b = document.getElementById('cloud-badge');
+    b.className = 'cloud-badge ' + state;
+    b.innerHTML = '<span class="cloud-dot"></span> ' + text;
+  }
+
+  async function pullCloud() {
+    try {
+      setBadge('syncing', 'Syncing...');
+      const res = await fetch(DATA_URL + '?t=' + Date.now());
+      if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+      const cloudData = await res.json();
+      const metaRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/data.json?ref=${GH_BRANCH}`);
+      if (metaRes.ok) { dataSha = (await metaRes.json()).sha; }
+      if (Array.isArray(cloudData)) {
+        const localData = JSON.parse(localStorage.getItem('keuangan_data') || '[]');
+        const cloudIds = new Set(cloudData.map(d => d.id));
+        const localOnly = localData.filter(d => !cloudIds.has(d.id));
+        data = [...cloudData, ...localOnly];
+        localStorage.setItem('keuangan_data', JSON.stringify(data));
+        setBadge('online', 'Cloud');
+        if (localOnly.length > 0) pushCloud();
+        return true;
+      }
+      setBadge('online', 'Cloud');
+      return true;
+    } catch (e) {
+      data = JSON.parse(localStorage.getItem('keuangan_data') || '[]');
+      setBadge('offline', 'Offline');
+      return false;
+    }
+  }
+
+  async function pushCloud() {
+    if (!ghToken) { setBadge('offline', 'Offline'); return; }
+    try {
+      setBadge('syncing', 'Saving...');
+      const metaRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/data.json?ref=${GH_BRANCH}`, {
+        headers: { 'Authorization': 'token ' + ghToken }
+      });
+      let sha = dataSha;
+      if (metaRes.ok) { sha = (await metaRes.json()).sha; dataSha = sha; }
+      const payload = {
+        message: 'Update from webapp ' + new Date().toISOString(),
+        content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2)))),
+        branch: GH_BRANCH,
+        sha: sha
+      };
+      const res = await fetch(API_BASE, {
+        method: 'PUT',
+        headers: { 'Authorization': 'token ' + ghToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) { dataSha = (await res.json()).content.sha; setBadge('online', 'Cloud'); }
+      else { setBadge('offline', 'Error'); }
+    } catch (e) { setBadge('offline', 'Error'); }
+  }
+
+  async function syncCloud() {
+    await pullCloud();
+    updateSummary(); renderChart(); renderList(); renderFilterCat();
+  }
+
+  function startAutoRefresh() {
+    if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+    autoRefreshTimer = setInterval(async () => {
+      const prev = JSON.stringify(data);
+      const ok = await pullCloud();
+      if (ok && JSON.stringify(data) !== prev) {
+        updateSummary(); renderChart(); renderList(); renderFilterCat();
+      }
+    }, 30000);
+  }
+
+  function openSettings() {
+    document.getElementById('set-token').value = ghToken;
+    document.getElementById('settings-modal').classList.add('active');
+  }
+  function closeSettings() { document.getElementById('settings-modal').classList.remove('active'); }
+  function saveSettings() {
+    ghToken = document.getElementById('set-token').value.trim();
+    localStorage.setItem('gh_token', ghToken);
+    closeSettings();
+    pullCloud().then(() => { updateSummary(); renderChart(); renderList(); startAutoRefresh(); });
+  }
   function fmt(n)   { return 'Rp ' + Math.abs(n).toLocaleString('id-ID'); }
 
   // ── GRAFIK ────────────────────────────────────────────
@@ -564,9 +732,12 @@
   }
 
   // ── INIT ──────────────────────────────────────────────
-  function init() {
+  async function init() {
     document.getElementById('f-tanggal').value = new Date().toISOString().split('T')[0];
-    setType('masuk'); updateSummary(); renderChart(); renderList();
+    setType('masuk');
+    await pullCloud();
+    updateSummary(); renderChart(); renderList();
+    startAutoRefresh();
   }
 
   function resetFilter() {
