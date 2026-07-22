@@ -5,335 +5,426 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Catatan Keuangan</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23f0abfc'/><text x='32' y='44' text-anchor='middle' font-size='36'>💰</text></svg>" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Archivo+Black&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #f0d6f5;   /* lavender desktop */
-      --win-bg:    #fefce8;   /* cream window body */
-      --titlebar:  #d9f99d;   /* lime green title bar */
-      --border:    #1a1a1a;   /* thick black border */
-      --shadow:    4px 4px 0 #1a1a1a;
-      --dot-red:   #f87171;
-      --dot-yellow:#fbbf24;
-      --dot-green: #a3e635;
-      --accent:    #7c3aed;   /* purple accent */
-      --accent2:   #f472b6;   /* pink */
-      --accent3:   #34d399;   /* mint */
-      --text:      #1a1a1a;
-      --muted:     #6b7280;
-      --green-txt: #15803d;
-      --red-txt:   #dc2626;
-      --blue-txt:  #1d4ed8;
-      --input-bg:  #ffffff;
-      --radius:    10px;
+      /* Neobrutalism palette — bright, saturated, high contrast */
+      --bg:        #ffe45e;       /* bright yellow background */
+      --card:      #ffffff;       /* white cards */
+      --card-alt:  #f4f4f4;       /* light gray */
+      --border:    #000000;       /* pure black borders */
+      --shadow:    6px 6px 0 #000;
+      --shadow-sm: 3px 3px 0 #000;
+      --shadow-lg: 8px 8px 0 #000;
+      --pink:      #ff6ec7;
+      --cyan:      #4ecdc4;
+      --lime:      #c1ff72;
+      --orange:    #ff9f43;
+      --purple:    #a17ee9;
+      --red:       #ff4757;
+      --green:     #2ed573;
+      --blue:      #3742fa;
+      --yellow:    #ffe45e;
+      --text:      #000000;
+      --muted:     #555;
     }
 
     body {
       font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
-      background-color: var(--bg);
-      background-image:
-        radial-gradient(circle, #d8b4fe33 1px, transparent 1px);
-      background-size: 24px 24px;
+      background: var(--bg);
       min-height: 100vh;
-      padding: 20px 12px 60px;
+      padding: 16px 12px 60px;
       color: var(--text);
     }
 
     /* ── PAGE TITLE ── */
     .page-title {
       text-align: center;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
     .page-title h1 {
-      font-size: 1.6rem; font-weight: 700;
-      color: var(--accent);
-      text-shadow: 2px 2px 0 #1a1a1a;
-      letter-spacing: -0.5px;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 1.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #000;
+      background: #fff;
+      display: inline-block;
+      padding: 6px 20px;
+      border: 3px solid #000;
+      box-shadow: var(--shadow);
+      transform: rotate(-1deg);
     }
-    .page-title p { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+    .page-title p {
+      font-size: .85rem; font-weight: 600; color: #000;
+      margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;
+    }
 
-    /* ── WINDOW ── */
+    /* ── CONTAINER ── */
     .container { max-width: 620px; margin: 0 auto; }
 
+    /* ── CARDS (replaces .win) ── */
     .win {
-      background: var(--win-bg);
-      border: 2.5px solid var(--border);
-      border-radius: var(--radius);
+      background: var(--card);
+      border: 3px solid var(--border);
       box-shadow: var(--shadow);
-      margin-bottom: 18px;
+      margin-bottom: 20px;
       overflow: hidden;
     }
 
     .win-bar {
-      background: var(--titlebar);
-      border-bottom: 2.5px solid var(--border);
-      padding: 7px 10px;
+      background: var(--pink);
+      border-bottom: 3px solid var(--border);
+      padding: 10px 14px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .win-bar-left { display: flex; align-items: center; gap: 7px; }
-    .win-dots { display: flex; gap: 5px; }
+    .win-bar-left { display: flex; align-items: center; gap: 10px; }
+    .win-dots { display: flex; gap: 6px; }
     .dot {
-      width: 12px; height: 12px; border-radius: 50%;
-      border: 2px solid var(--border);
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2.5px solid var(--border);
     }
-    .dot.red    { background: var(--dot-red); }
-    .dot.yellow { background: var(--dot-yellow); }
-    .dot.green  { background: var(--dot-green); }
+    .dot.red    { background: var(--red); }
+    .dot.yellow { background: var(--yellow); }
+    .dot.green  { background: var(--green); }
     .win-title {
-      font-size: .8rem; font-weight: 700; color: var(--text);
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .8rem; text-transform: uppercase;
+      letter-spacing: 1px; color: #000;
     }
 
-    /* toolbar pill (address bar style) */
+    /* toolbar pill */
     .win-pill {
-      background: #fff; border: 2px solid var(--border);
-      border-radius: 20px; padding: 2px 10px;
-      font-size: .72rem; font-weight: 600; color: var(--muted);
-      flex: 1; max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      background: #fff; border: 2.5px solid var(--border);
+      padding: 3px 12px;
+      font-size: .72rem; font-weight: 700; color: #000;
+      box-shadow: var(--shadow-sm);
+      max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    .win-body { padding: 14px; }
+    .win-body { padding: 16px; }
 
     /* ── SUMMARY ── */
-    .summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+    .summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 4px; }
     .sum-card {
       background: #fff;
-      border: 2.5px solid var(--border);
-      border-radius: 10px;
-      box-shadow: 3px 3px 0 var(--border);
-      padding: 12px 8px; text-align: center;
+      border: 3px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      padding: 14px 8px; text-align: center;
+      transition: transform .1s, box-shadow .1s;
     }
+    .sum-card:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
+    }
+    .sum-card.saldo  { background: var(--cyan); }
+    .sum-card.masuk  { background: var(--lime); }
+    .sum-card.keluar { background: var(--orange); }
     .sum-card .s-label {
-      font-size: .65rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .5px; color: var(--muted); margin-bottom: 5px;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .65rem; text-transform: uppercase;
+      letter-spacing: 1px; color: #000; margin-bottom: 6px;
     }
-    .sum-card .s-amount { font-size: .95rem; font-weight: 700; word-break: break-all; }
-    .sum-card.saldo  .s-amount { color: var(--blue-txt); }
-    .sum-card.masuk  .s-amount { color: var(--green-txt); }
-    .sum-card.keluar .s-amount { color: var(--red-txt); }
+    .sum-card .s-amount { font-size: .95rem; font-weight: 700; color: #000; word-break: break-all; }
 
     /* ── TOGGLE TYPE ── */
     .toggle-type {
       display: flex;
-      background: #f3f4f6;
-      border: 2px solid var(--border);
-      border-radius: 30px;
-      padding: 3px;
-      margin-bottom: 14px;
+      background: var(--card-alt);
+      border: 3px solid var(--border);
+      padding: 4px;
+      margin-bottom: 16px;
       gap: 4px;
     }
     .toggle-type button {
-      flex: 1; padding: 7px; border: 2px solid transparent;
-      border-radius: 24px; background: transparent;
-      font-size: .82rem; font-weight: 600; font-family: inherit;
-      cursor: pointer; transition: all .15s; color: var(--muted);
+      flex: 1; padding: 9px; border: 3px solid transparent;
+      background: transparent;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .78rem; text-transform: uppercase; letter-spacing: .5px;
+      cursor: pointer; transition: all .12s; color: var(--muted);
     }
     .toggle-type button.active-masuk {
-      background: #dcfce7; border-color: var(--border);
-      color: var(--green-txt); box-shadow: 2px 2px 0 var(--border);
+      background: var(--green); border-color: var(--border);
+      color: #000; box-shadow: var(--shadow-sm);
     }
     .toggle-type button.active-keluar {
-      background: #fee2e2; border-color: var(--border);
-      color: var(--red-txt); box-shadow: 2px 2px 0 var(--border);
+      background: var(--red); border-color: var(--border);
+      color: #fff; box-shadow: var(--shadow-sm);
     }
 
     /* ── FORM ── */
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
-    .form-group label { font-size: .75rem; font-weight: 700; color: var(--text); }
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+    .form-group label {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .5px; color: #000;
+    }
 
     .form-group input,
     .form-group select,
     .form-group textarea {
-      background: var(--input-bg);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      padding: 8px 10px;
-      font-size: .85rem;
+      background: #fff;
+      border: 3px solid var(--border);
+      color: #000;
+      padding: 9px 12px;
+      font-size: .85rem; font-weight: 600;
       font-family: inherit;
       width: 100%; outline: none;
-      transition: box-shadow .15s;
+      box-shadow: var(--shadow-sm);
+      transition: transform .1s, box-shadow .1s;
     }
     .form-group input:focus,
     .form-group select:focus,
     .form-group textarea:focus {
-      box-shadow: 3px 3px 0 var(--accent);
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
     }
-    .form-group textarea { resize: vertical; min-height: 60px; }
-    select option { background: #fff; }
+    .form-group textarea { resize: vertical; min-height: 50px; }
 
     /* ── BUTTONS ── */
-    .btn {
-      background: #fff; border: 2.5px solid var(--border);
-      border-radius: 8px; padding: 7px 14px;
-      font-size: .8rem; font-weight: 700; font-family: inherit;
-      cursor: pointer; box-shadow: 3px 3px 0 var(--border);
-      transition: all .1s; color: var(--text);
-    }
-    .btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--border); }
-    .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--border); }
-
     .btn-submit {
-      width: 100%; padding: 10px;
+      width: 100%; padding: 13px;
+      border: 3px solid var(--border);
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .9rem; text-transform: uppercase; letter-spacing: 1px;
+      cursor: pointer; transition: transform .1s, box-shadow .1s;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-submit.masuk  { background: var(--green); color: #000; }
+    .btn-submit.keluar { background: var(--red); color: #fff; }
+    .btn-submit:hover {
+      transform: translate(3px, 3px);
+      box-shadow: 0 0 0 #000;
+    }
+    .btn-submit:active {
+      transform: translate(3px, 3px);
+      box-shadow: 0 0 0 #000;
+    }
+
+    .btn {
+      background: #fff;
       border: 2.5px solid var(--border);
-      border-radius: 10px;
-      font-size: .9rem; font-weight: 700; font-family: inherit;
-      cursor: pointer; margin-top: 4px;
-      box-shadow: 3px 3px 0 var(--border);
-      transition: all .1s;
+      padding: 6px 12px;
+      font-size: .78rem; font-weight: 700;
+      font-family: inherit; cursor: pointer;
+      box-shadow: 2px 2px 0 #000;
+      transition: transform .1s, box-shadow .1s;
     }
-    .btn-submit:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--border); }
-    .btn-submit.masuk  { background: #dcfce7; color: var(--green-txt); }
-    .btn-submit.keluar { background: #fee2e2; color: var(--red-txt); }
-
-    /* ── FILTER ── */
-    .filter-bar { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
-    .filter-bar select, .filter-bar input {
-      background: var(--input-bg); border: 2px solid var(--border);
-      border-radius: 8px; color: var(--text); padding: 7px 10px;
-      font-size: .8rem; font-family: inherit;
-      flex: 1; min-width: 110px; outline: none;
+    .btn:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 #000;
     }
-    .filter-bar select:focus, .filter-bar input:focus { box-shadow: 2px 2px 0 var(--accent); }
-
-    .filter-date-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: center; flex-wrap: wrap; }
-    .filter-date-row label { font-size: .75rem; font-weight: 700; white-space: nowrap; }
-    .filter-date-row input[type=date] {
-      background: var(--input-bg); border: 2px solid var(--border);
-      border-radius: 8px; color: var(--text); padding: 7px 10px;
-      font-size: .8rem; font-family: inherit;
-      flex: 1; min-width: 120px; outline: none;
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0 0 0 #000;
     }
 
-    .filter-actions { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; }
-    .filter-info { font-size: .75rem; color: var(--muted); flex: 1; font-weight: 600; }
-
-    /* ── TX LIST ── */
-    .empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: .85rem; }
-
-    .tx-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 8px;
-      border-bottom: 2px dashed #e5e7eb;
-      transition: background .12s;
-    }
-    .tx-item:last-child { border-bottom: none; }
-    .tx-item:hover { background: #faf5ff; border-radius: 8px; }
-
-    .tx-icon {
-      width: 38px; height: 38px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem; flex-shrink: 0;
-      border: 2px solid var(--border);
-      box-shadow: 2px 2px 0 var(--border);
-    }
-    .tx-icon.masuk  { background: #dcfce7; }
-    .tx-icon.keluar { background: #fee2e2; }
-
-    .tx-info { flex: 1; min-width: 0; }
-    .tx-info .tx-cat  { font-size: .85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .tx-info .tx-meta { font-size: .72rem; color: var(--muted); margin-top: 2px; }
-    .tx-info .tx-note { font-size: .72rem; color: var(--muted); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    .tx-right { text-align: right; flex-shrink: 0; }
-    .tx-right .tx-amount { font-size: .88rem; font-weight: 700; }
-    .tx-right .tx-amount.masuk  { color: var(--green-txt); }
-    .tx-right .tx-amount.keluar { color: var(--red-txt); }
-    .tx-right .tx-del {
-      background: none; border: none; color: var(--muted); cursor: pointer;
-      font-size: .72rem; margin-top: 3px; display: block; text-align: right;
-    }
-    .tx-del:hover { color: var(--red-txt); text-decoration: underline; }
-
-    /* ── CHART ── */
-    .chart-tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+    /* ── CHART TABS ── */
+    .chart-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
     .chart-tab {
-      background: #fff; border: 2px solid var(--border);
-      border-radius: 20px; padding: 5px 14px;
-      font-size: .78rem; font-weight: 700; font-family: inherit;
-      cursor: pointer; color: var(--muted);
-      box-shadow: 2px 2px 0 var(--border); transition: all .1s;
+      background: #fff; border: 3px solid var(--border);
+      padding: 6px 16px;
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .75rem; text-transform: uppercase; letter-spacing: .5px;
+      cursor: pointer; box-shadow: var(--shadow-sm);
+      transition: transform .1s, box-shadow .1s;
     }
-    .chart-tab.active {
-      background: var(--accent); color: #fff;
-      box-shadow: 3px 3px 0 var(--border);
-    }
-    .chart-tab:hover:not(.active) { transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--border); }
+    .chart-tab.active { background: var(--purple); color: #fff; }
+    .chart-tab:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #000; }
 
-    .chart-wrap { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
-    .chart-legend { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 6px; }
-    .legend-item { display: flex; align-items: center; gap: 7px; }
+    .chart-empty {
+      text-align: center; padding: 30px 10px;
+      font-size: .9rem; font-weight: 700; color: var(--muted);
+    }
+    .chart-wrap { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .chart-legend { flex: 1; min-width: 160px; }
+    .legend-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0; border-bottom: 2px dashed #00000022;
+    }
     .legend-dot {
-      width: 12px; height: 12px; border-radius: 3px;
-      border: 2px solid var(--border); flex-shrink: 0;
+      width: 16px; height: 16px; border: 2.5px solid var(--border); flex-shrink: 0;
     }
-    .legend-info { flex: 1; min-width: 0; }
-    .legend-cat { font-size: .8rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .legend-amt { font-size: .7rem; color: var(--muted); }
-    .legend-pct { font-size: .75rem; font-weight: 700; color: var(--accent); flex-shrink: 0; }
-
-    .chart-empty { text-align: center; color: var(--muted); padding: 20px 0; font-size: .82rem; }
-
-    /* ── SECTION LABEL ── */
-    .sec-label {
-      font-size: .7rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; color: var(--muted); margin-bottom: 8px;
+    .legend-info { flex: 1; }
+    .legend-cat { font-size: .78rem; font-weight: 700; }
+    .legend-amt { font-size: .72rem; color: var(--muted); }
+    .legend-pct {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .75rem; color: #000;
     }
 
-    /* ── LIST TOP ACTIONS ── */
-    .list-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .list-actions h3 { font-size: .85rem; font-weight: 700; }
+    /* ── LIST ── */
+    .list-actions {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+    }
+    .list-actions h3 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
+    }
 
-    /* ── CLOUD SYNC BADGE ── */
+    .filter-bar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
+    }
+    .filter-bar select {
+      background: #fff; border: 2.5px solid var(--border);
+      padding: 7px 10px; font-size: .8rem; font-weight: 600;
+      font-family: inherit; box-shadow: var(--shadow-sm);
+      outline: none;
+    }
+    .filter-date-row {
+      display: grid; grid-template-columns: auto 1fr auto 1fr;
+      gap: 6px; align-items: center; margin-bottom: 8px;
+    }
+    .filter-date-row label {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .65rem; text-transform: uppercase;
+    }
+    .filter-date-row input {
+      background: #fff; border: 2.5px solid var(--border);
+      padding: 6px 8px; font-size: .78rem; font-family: inherit;
+      box-shadow: var(--shadow-sm); outline: none;
+    }
+    .filter-actions {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;
+    }
+    .filter-info { font-size: .75rem; font-weight: 700; color: var(--muted); }
+
+    .empty {
+      text-align: center; padding: 30px 10px;
+      font-size: .9rem; font-weight: 700; color: var(--muted);
+      background: var(--card-alt); border: 3px dashed var(--border);
+    }
+
+    /* ── TX ITEM ── */
+    .tx-item {
+      display: flex; align-items: stretch; gap: 12px;
+      padding: 12px;
+      background: #fff;
+      border: 3px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 10px;
+      transition: transform .1s, box-shadow .1s;
+    }
+    .tx-item:hover {
+      transform: translate(2px, 2px);
+      box-shadow: 1px 1px 0 #000;
+    }
+    .tx-icon {
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      border: 2.5px solid var(--border);
+      flex-shrink: 0;
+    }
+    .tx-icon.masuk  { background: var(--lime); }
+    .tx-icon.keluar { background: var(--orange); }
+    .tx-info { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .tx-cat {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .82rem; text-transform: uppercase; letter-spacing: .5px;
+    }
+    .tx-meta { font-size: .72rem; color: var(--muted); font-weight: 600; }
+    .tx-note {
+      font-size: .75rem; font-weight: 600; color: #000;
+      background: var(--yellow); border: 2px solid var(--border);
+      padding: 1px 6px; margin-top: 3px; display: inline-block; align-self: flex-start;
+    }
+    .tx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; justify-content: center; }
+    .tx-amount {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .9rem; white-space: nowrap;
+    }
+    .tx-amount.masuk  { color: var(--green); }
+    .tx-amount.keluar { color: var(--red); }
+    .tx-del {
+      background: var(--card-alt); border: 2px solid var(--border);
+      padding: 3px 8px; font-size: .68rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      box-shadow: 2px 2px 0 #000;
+      transition: transform .1s, box-shadow .1s;
+    }
+    .tx-del:hover {
+      background: var(--red); color: #fff;
+      transform: translate(2px, 2px); box-shadow: 0 0 0 #000;
+    }
+
+    /* ── CLOUD BADGE ── */
     .cloud-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: .65rem; font-weight: 700; padding: 2px 8px;
-      border-radius: 20px; border: 1.5px solid var(--border);
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; font-size: .68rem; font-weight: 700;
+      border: 2.5px solid var(--border); box-shadow: 2px 2px 0 #000;
+      font-family: 'Archivo Black', sans-serif; text-transform: uppercase;
     }
-    .cloud-badge.online  { background: #dcfce7; color: var(--green-txt); }
-    .cloud-badge.offline { background: #fee2e2; color: var(--red-txt); }
-    .cloud-badge.syncing { background: #fef9c3; color: #a16207; }
+    .cloud-badge.online { background: var(--green); color: #000; }
+    .cloud-badge.offline { background: #fff; color: var(--muted); }
+    .cloud-badge.syncing { background: var(--yellow); color: #000; }
     .cloud-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: currentColor;
-      animation: pulse 1.5s infinite;
+      width: 8px; height: 8px; border-radius: 50%;
+      border: 2px solid var(--border); background: inherit;
     }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-    /* ── SETTINGS MODAL ── */
+
+    /* ── MODAL ── */
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      display: none; align-items: center; justify-content: center;
-      z-index: 999; padding: 20px;
+      display: none; position: fixed; inset: 0;
+      background: #000000aa; z-index: 100;
+      align-items: center; justify-content: center; padding: 20px;
     }
     .modal-overlay.active { display: flex; }
     .modal {
-      background: var(--win-bg); border: 2.5px solid var(--border);
-      border-radius: var(--radius); box-shadow: var(--shadow);
-      max-width: 400px; width: 100%; overflow: hidden;
+      background: #fff; border: 3px solid var(--border);
+      box-shadow: var(--shadow-lg); max-width: 420px; width: 100%;
     }
     .modal-bar {
-      background: var(--titlebar); border-bottom: 2.5px solid var(--border);
-      padding: 7px 10px; display: flex; justify-content: space-between; align-items: center;
+      background: var(--purple); border-bottom: 3px solid var(--border);
+      padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;
     }
-    .modal-bar h3 { font-size: .82rem; font-weight: 700; }
+    .modal-bar h3 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .9rem; text-transform: uppercase; letter-spacing: 1px;
+    }
     .modal-bar button {
-      background: none; border: none; font-size: 1rem; cursor: pointer;
-      color: var(--text); font-weight: 700;
+      background: #fff; border: 2.5px solid var(--border);
+      width: 30px; height: 30px; font-weight: 700;
+      cursor: pointer; box-shadow: 2px 2px 0 #000;
+      transition: transform .1s, box-shadow .1s;
     }
+    .modal-bar button:hover { transform: translate(2px,2px); box-shadow: 0 0 0 #000; }
     .modal-body { padding: 16px; }
-    .modal-body label { font-size: .75rem; font-weight: 700; display: block; margin-bottom: 4px; }
-    .modal-body input {
-      background: var(--input-bg); border: 2px solid var(--border);
-      border-radius: 8px; padding: 8px 10px; font-size: .82rem;
-      font-family: inherit; width: 100%; margin-bottom: 12px; outline: none;
+    .modal-body label {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .5px;
+      display: block; margin-bottom: 6px;
     }
-    .modal-body input:focus { box-shadow: 3px 3px 0 var(--accent); }
-    .modal-body .hint { font-size: .7rem; color: var(--muted); margin-bottom: 12px; line-height: 1.4; }
-    .modal-body .btn-row { display: flex; gap: 8px; }
-    @media (max-width: 400px) {
-      .summary { grid-template-columns: 1fr; }
-      .grid2 { grid-template-columns: 1fr; }
+    .modal-body input {
+      width: 100%; background: #fff; border: 3px solid var(--border);
+      padding: 9px 12px; font-size: .85rem; font-family: inherit;
+      box-shadow: var(--shadow-sm); margin-bottom: 10px; outline: none;
+    }
+    .hint {
+      font-size: .72rem; color: var(--muted); font-weight: 600;
+      background: var(--card-alt); border: 2px solid var(--border);
+      padding: 8px 10px; margin-bottom: 12px;
+    }
+    .hint code { background: #000; color: var(--yellow); padding: 1px 5px; font-weight: 700; }
+    .btn-row { display: flex; gap: 8px; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 12px; }
+    ::-webkit-scrollbar-track { background: var(--card-alt); border-left: 2px solid var(--border); }
+    ::-webkit-scrollbar-thumb { background: var(--purple); border: 2px solid var(--border); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 480px) {
+      .page-title h1 { font-size: 1.4rem; }
+      .summary { gap: 6px; }
+      .sum-card { padding: 10px 4px; }
+      .sum-card .s-amount { font-size: .8rem; }
+      .filter-date-row { grid-template-columns: 1fr 1fr; }
+      .filter-date-row label { grid-column: span 2; }
+      .win-pill { display: none; }
     }
   </style>
 </head>
@@ -344,10 +435,10 @@
   <!-- PAGE TITLE -->
   <div class="page-title">
     <h1>💰 Catatan Keuangan</h1>
-    <p>Kelola pemasukan & pengeluaran dengan mudah</p>
+    <p>Kelola pemasukan & pengeluaran</p>
   </div>
 
-  <!-- SUMMARY WINDOW -->
+  <!-- SUMMARY -->
   <div class="win">
     <div class="win-bar">
       <div class="win-bar-left">
@@ -356,7 +447,7 @@
           <div class="dot yellow"></div>
           <div class="dot green"></div>
         </div>
-        <span class="win-title">Ringkasan Keuangan</span>
+        <span class="win-title">Ringkasan</span>
       </div>
       <div style="display:flex;gap:6px;align-items:center;">
         <span class="cloud-badge offline" id="cloud-badge"><span class="cloud-dot"></span> Offline</span>
@@ -366,22 +457,22 @@
     <div class="win-body">
       <div class="summary">
         <div class="sum-card saldo">
-          <div class="s-label">💾 Saldo</div>
+          <div class="s-label">Saldo</div>
           <div class="s-amount" id="sum-saldo">Rp 0</div>
         </div>
         <div class="sum-card masuk">
-          <div class="s-label">▲ Masuk</div>
+          <div class="s-label">Masuk</div>
           <div class="s-amount" id="sum-masuk">Rp 0</div>
         </div>
         <div class="sum-card keluar">
-          <div class="s-label">▼ Keluar</div>
+          <div class="s-label">Keluar</div>
           <div class="s-amount" id="sum-keluar">Rp 0</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- GRAFIK WINDOW -->
+  <!-- GRAFIK -->
   <div class="win">
     <div class="win-bar">
       <div class="win-bar-left">
@@ -390,20 +481,20 @@
           <div class="dot yellow"></div>
           <div class="dot green"></div>
         </div>
-        <span class="win-title">📊 Grafik Pengeluaran</span>
+        <span class="win-title">Grafik</span>
       </div>
-      <div class="win-pill">chart-view.exe</div>
+      <div class="win-pill">chart-view</div>
     </div>
     <div class="win-body">
       <div class="chart-tabs">
-        <button class="chart-tab active" id="tab-donut" onclick="switchChart('donut')">🍩 Donut</button>
-        <button class="chart-tab" id="tab-bar"   onclick="switchChart('bar')">📊 Bar</button>
+        <button class="chart-tab active" id="tab-donut" onclick="switchChart('donut')">Donut</button>
+        <button class="chart-tab" id="tab-bar" onclick="switchChart('bar')">Bar</button>
       </div>
       <div id="chart-content"></div>
     </div>
   </div>
 
-  <!-- FORM WINDOW -->
+  <!-- FORM -->
   <div class="win">
     <div class="win-bar">
       <div class="win-bar-left">
@@ -412,35 +503,35 @@
           <div class="dot yellow"></div>
           <div class="dot green"></div>
         </div>
-        <span class="win-title">✏️ Tambah Transaksi</span>
+        <span class="win-title">Tambah Transaksi</span>
       </div>
-      <div class="win-pill">new-transaction.form</div>
+      <div class="win-pill">new-tx.form</div>
     </div>
     <div class="win-body">
 
       <div class="toggle-type">
-        <button id="btn-masuk" class="active-masuk" onclick="setType('masuk')">▲ Pemasukan</button>
-        <button id="btn-keluar" onclick="setType('keluar')">▼ Pengeluaran</button>
+        <button id="btn-masuk" class="active-masuk" onclick="setType('masuk')">Pemasukan</button>
+        <button id="btn-keluar" onclick="setType('keluar')">Pengeluaran</button>
       </div>
 
       <div class="grid2">
         <div class="form-group">
-          <label>📅 Tanggal</label>
+          <label>Tanggal</label>
           <input type="date" id="f-tanggal" />
         </div>
         <div class="form-group">
-          <label>💵 Jumlah (Rp)</label>
+          <label>Jumlah (Rp)</label>
           <input type="number" id="f-jumlah" placeholder="0" min="0" />
         </div>
       </div>
 
       <div class="form-group">
-        <label>🏷️ Kategori</label>
+        <label>Kategori</label>
         <select id="f-kategori"></select>
       </div>
 
       <div class="form-group">
-        <label>📝 Catatan (opsional)</label>
+        <label>Catatan (opsional)</label>
         <textarea id="f-catatan" placeholder="Tulis catatan..."></textarea>
       </div>
 
@@ -448,7 +539,7 @@
     </div>
   </div>
 
-  <!-- LIST WINDOW -->
+  <!-- LIST -->
   <div class="win">
     <div class="win-bar">
       <div class="win-bar-left">
@@ -457,7 +548,7 @@
           <div class="dot yellow"></div>
           <div class="dot green"></div>
         </div>
-        <span class="win-title">📋 Riwayat Transaksi</span>
+        <span class="win-title">Riwayat</span>
       </div>
       <div class="win-pill">transactions.log</div>
     </div>
@@ -465,7 +556,7 @@
 
       <div class="list-actions">
         <h3>Daftar Transaksi</h3>
-        <div style="display:flex;gap:6px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
           <button class="btn" onclick="syncCloud()" title="Sync dari cloud">🔄</button>
           <button class="btn" onclick="openSettings()" title="Settings">⚙️</button>
           <button class="btn" onclick="eksporCSV()">⬇ CSV</button>
@@ -498,15 +589,16 @@
       <div id="tx-list"></div>
     </div>
   </div>
+
   <!-- SETTINGS MODAL -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal">
       <div class="modal-bar">
-        <h3>⚙️ Settings Cloud Sync</h3>
+        <h3>Settings Cloud Sync</h3>
         <button onclick="closeSettings()">✕</button>
       </div>
       <div class="modal-body">
-        <label>🔑 GitHub Token (untuk write)</label>
+        <label>GitHub Token (untuk write)</label>
         <input type="password" id="set-token" placeholder="ghp_..." />
         <div class="hint">
           Token disimpan lokal di browser. Hanya dipakai untuk menulis ke <code>data.json</code>.
@@ -514,12 +606,13 @@
         </div>
         <div class="btn-row">
           <button class="btn" onclick="closeSettings()" style="flex:1;">Batal</button>
-          <button class="btn-submit masuk" onclick="saveSettings()" style="flex:1;box-shadow:3px 3px 0 var(--border);">💾 Simpan</button>
+          <button class="btn-submit masuk" onclick="saveSettings()" style="flex:1;">Simpan</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
 <script>
   const CAT = {
     masuk:  ['Gaji', 'Freelance', 'Bonus', 'Investasi', 'Hadiah', 'Lainnya'],
@@ -597,7 +690,6 @@
       if (metaRes.ok) {
         const meta = await metaRes.json();
         sha = meta.sha; dataSha = sha;
-        // Decode cloud content
         try {
           cloudData = JSON.parse(atob(meta.content.replace(/\n/g, '')));
         } catch(e) { cloudData = []; }
@@ -605,11 +697,9 @@
       // 2. Merge: cloud entries + local-only entries (by id)
       const cloudIds = new Set(cloudData.map(d => d.id));
       const localOnly = data.filter(d => !cloudIds.has(d.id));
-      // Also keep local edits to existing entries (by id, prefer local version)
       const localIds = new Set(data.map(d => d.id));
       const cloudOnly = cloudData.filter(d => !localIds.has(d.id));
       const merged = [...data, ...cloudOnly];
-      // Sort by id descending (newest first)
       merged.sort((a, b) => b.id - a.id);
       data = merged;
       localStorage.setItem('keuangan_data', JSON.stringify(data));
@@ -661,8 +751,8 @@
 
   // ── GRAFIK ────────────────────────────────────────────
   const PALETTE = [
-    '#f87171','#fb923c','#facc15','#4ade80','#34d399',
-    '#60a5fa','#a78bfa','#f472b6','#94a3b8','#2dd4bf',
+    '#ff6ec7','#4ecdc4','#c1ff72','#ff9f43','#a17ee9',
+    '#3742fa','#2ed573','#ff4757','#ffe45e','#ff6b6b',
   ];
   let chartMode = 'donut';
 
@@ -677,7 +767,7 @@
     const keluar = data.filter(d => d.tipe === 'keluar');
     const el = document.getElementById('chart-content');
     if (!keluar.length) {
-      el.innerHTML = '<div class="chart-empty">✨ Belum ada data pengeluaran</div>';
+      el.innerHTML = '<div class="chart-empty">Belum ada data pengeluaran</div>';
       return;
     }
     const map = {};
@@ -692,8 +782,8 @@
     const SIZE=180, CX=90, CY=90, R=68, RI=40, GAP=0.04;
     let paths='';
     if (items.length===1) {
-      paths=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="${items[0].color}" stroke="#1a1a1a" stroke-width="2"/>
-             <circle cx="${CX}" cy="${CY}" r="${RI}" fill="#fefce8" stroke="#1a1a1a" stroke-width="1.5"/>`;
+      paths=`<circle cx="${CX}" cy="${CY}" r="${R}" fill="${items[0].color}" stroke="#000" stroke-width="3"/>
+             <circle cx="${CX}" cy="${CY}" r="${RI}" fill="#fff" stroke="#000" stroke-width="2"/>`;
     } else {
       let angle=-Math.PI/2;
       items.forEach(item=>{
@@ -704,7 +794,7 @@
         const x1i=CX+RI*Math.cos(a2), y1i=CY+RI*Math.sin(a2);
         const x2i=CX+RI*Math.cos(a1), y2i=CY+RI*Math.sin(a1);
         const d=`M${x1o.toFixed(1)},${y1o.toFixed(1)} A${R},${R} 0 ${lg},1 ${x2o.toFixed(1)},${y2o.toFixed(1)} L${x1i.toFixed(1)},${y1i.toFixed(1)} A${RI},${RI} 0 ${lg},0 ${x2i.toFixed(1)},${y2i.toFixed(1)} Z`;
-        paths+=`<path d="${d}" fill="${item.color}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+        paths+=`<path d="${d}" fill="${item.color}" stroke="#000" stroke-width="2"/>`;
         angle+=item.pct*2*Math.PI;
       });
     }
@@ -727,8 +817,8 @@
       <div class="chart-wrap">
         <svg width="${SIZE}" height="${SIZE}" viewBox="0 0 ${SIZE} ${SIZE}" style="flex-shrink:0;display:block">
           ${paths}
-          <text x="${CX}" y="${CY-8}" text-anchor="middle" fill="#6b7280" font-size="9" font-family="Space Grotesk,sans-serif" font-weight="600">Total</text>
-          <text x="${CX}" y="${CY+8}" text-anchor="middle" fill="#1a1a1a" font-size="10" font-weight="700" font-family="Space Grotesk,sans-serif">${fmtS(total)}</text>
+          <text x="${CX}" y="${CY-8}" text-anchor="middle" fill="#555" font-size="9" font-family="Archivo Black,sans-serif">Total</text>
+          <text x="${CX}" y="${CY+8}" text-anchor="middle" fill="#000" font-size="10" font-weight="700" font-family="Archivo Black,sans-serif">${fmtS(total)}</text>
         </svg>
         <div class="chart-legend">${leg}</div>
       </div>`;
@@ -740,13 +830,13 @@
       return`<div style="margin-bottom:12px;">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:.8rem;">
           <span style="font-weight:700;display:flex;align-items:center;gap:6px;">
-            <span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:${item.color};border:2px solid #1a1a1a;"></span>
+            <span style="display:inline-block;width:11px;height:11px;border:2.5px solid #000;background:${item.color};"></span>
             ${escHtml(item.cat)}
           </span>
-          <span style="color:#6b7280;font-size:.72rem;">${fmt(item.val)} <b style="color:#7c3aed">${w}%</b></span>
+          <span style="color:#555;font-size:.72rem;">${fmt(item.val)} <b style="color:#000">${w}%</b></span>
         </div>
-        <div style="background:#f3f4f6;border:2px solid #1a1a1a;border-radius:20px;height:14px;overflow:hidden;">
-          <div style="width:${w}%;background:${item.color};height:100%;border-radius:20px;"></div>
+        <div style="background:#f4f4f4;border:2.5px solid #000;height:14px;overflow:hidden;">
+          <div style="width:${w}%;background:${item.color};height:100%;"></div>
         </div>
       </div>`;
     }).join('');
@@ -819,7 +909,7 @@
     document.getElementById('sum-keluar').textContent=fmt(keluar);
     const el=document.getElementById('sum-saldo');
     el.textContent=(saldo<0?'-':'')+fmt(saldo);
-    el.style.color=saldo<0?'var(--red-txt)':'var(--blue-txt)';
+    el.style.color = saldo<0 ? '#ff4757' : '#000';
   }
 
   function renderList() {
@@ -839,7 +929,7 @@
       ?`${list.length} dari ${data.length} transaksi`:`${data.length} transaksi`;
     const el=document.getElementById('tx-list');
     if(!list.length){
-      el.innerHTML='<div class="empty">✨ Belum ada transaksi 📭</div>'; return;
+      el.innerHTML='<div class="empty">Belum ada transaksi</div>'; return;
     }
     el.innerHTML=list.map(d=>{
       const icon=(ICON[d.tipe]&&ICON[d.tipe][d.kategori])||(d.tipe==='masuk'?'💵':'💸');
